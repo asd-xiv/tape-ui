@@ -1,6 +1,6 @@
 <!-- markdownlint-disable first-line-h1 line-length -->
 
-[![npm package version](https://badge.fury.io/js/%40asd14%2Fm.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
+[![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
 
 # Tape UI
 
