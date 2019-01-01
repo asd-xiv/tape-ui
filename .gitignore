@@ -19,6 +19,7 @@ coverage
 
 # nyc test coverage
 .nyc_output
+.coveralls.yml
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -35,6 +36,9 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+
+# Parcel
+.cache
 
 # TypeScript v1 declaration files
 typings/
@@ -59,3 +63,15 @@ typings/
 
 # next.js build output
 .next
+
+# Babel compile
+dist/
+compile/
+
+# Sublime text
+*.sublime-project
+*.sublime-workspace
+.tern-port
+
+# Flow type
+flow-typed/

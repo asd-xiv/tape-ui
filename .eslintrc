@@ -1,0 +1,26 @@
+{
+  "parser": "babel-eslint",
+  "root": true,
+  "extends": [
+    "@asd14/eslint-config/targets/react",
+    "@asd14/eslint-config/rules/flow"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "compat/compat": "off",
+    "react/no-unknown-property": "off",
+    "react/require-default-props": "off",
+    "react/default-props-match-prop-types": "off",
+    "flowtype/no-unused-expressions": "off",
+  },
+  "settings": {
+    "react": {
+      "version": "16.7",
+      "flowVersion": "0.89"
+    },
+  }
+}
