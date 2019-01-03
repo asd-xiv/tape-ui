@@ -4,11 +4,11 @@ const debug = require("debug")("TapeUI:Index")
 
 import * as React from "react"
 import blessed from "neo-blessed"
-import { resolve } from "path"
+import { resolve, join } from "path"
 import { createBlessedRenderer } from "react-blessed"
 
 import { MainPage } from "./main.page/main.page"
-import { Store } from "./state"
+import { Store } from "./store"
 
 //
 const screen = blessed.screen({
@@ -27,9 +27,20 @@ screen.key(["escape", "q", "C-c"], () => {
 //
 const render = createBlessedRenderer(blessed)
 
-render(
-  <Store pattern={/.*.test.js/} root={resolve("src/asd")}>
-    <MainPage />
-  </Store>,
-  screen
-)
+type PropType = {
+  require: string[],
+  path: string,
+  pattern: string,
+}
+
+export default ({ require, path, pattern }: PropType) => {
+  render(
+    <Store
+      require={require}
+      pattern={pattern}
+      root={resolve(join(process.cwd(), path))}>
+      <MainPage />
+    </Store>,
+    screen
+  )
+}
