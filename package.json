@@ -34,7 +34,7 @@
     "update": "npm-check -u",
     "----DEV--------------------------------------": "",
     "start:dev": "DEBUG=TapeUI:* nodemon --require pretty-error/start --watch src --ignore *-test.js src/index.js",
-    "start": "DEBUG=TapeUI:* node --require @babel/register --require pretty-error/start src/index.jsx",
+    "start": "npm run build && node bin/cli.js",
     "----BUILD------------------------------------": "",
     "build": "rm -rf dist/* && babel src --out-dir dist",
     "prepare": "npm run build",
@@ -59,8 +59,6 @@
     "neo-blessed": "0.2.0",
     "react": "16.7.0",
     "react-blessed": "0.5.0",
-    "react-redux": "6.0.0",
-    "redux": "4.0.1",
     "tape": "4.9.2"
   },
   "peerDependencies": {
