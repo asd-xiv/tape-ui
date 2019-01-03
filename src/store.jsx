@@ -4,9 +4,10 @@ const debug = require("debug")("TapeUI:Store")
 
 import * as React from "react"
 import glob from "glob"
-import { spawn } from "child_process"
 import { basename } from "path"
-import { map, replaceBy, head, get, pipe } from "@asd14/m"
+import { reduce, map, head, get, pipe } from "@asd14/m"
+
+import { runTestFile } from "./actions"
 
 type TestFilesType = {|
   path: string,
@@ -14,10 +15,11 @@ type TestFilesType = {|
   content: string[],
   code?: number,
   signal?: string,
+  isLoading: boolean,
 |}
 
 type PropsType = {|
-  require: string[],
+  requireModules: string[],
   pattern: string,
   root: string,
   children: React.Node,
@@ -26,6 +28,7 @@ type PropsType = {|
 type StoreStateType = {|
   files?: TestFilesType[],
   filesSelectedPath?: string,
+  runArgs?: string[],
   isLoading?: boolean,
   onFileSelect?: (path: string) => void,
 |}
@@ -33,6 +36,7 @@ type StoreStateType = {|
 const { Provider, Consumer } = React.createContext<StoreStateType>({
   files: [],
   filesSelectedPath: "",
+  runArgs: [],
   isLoading: false,
 })
 
@@ -40,6 +44,7 @@ class Store extends React.Component<PropsType, StoreStateType> {
   state = {
     files: [],
     filesSelectedPath: "",
+    runArgs: [],
     isLoading: false,
   }
 
@@ -62,7 +67,7 @@ class Store extends React.Component<PropsType, StoreStateType> {
   constructor(props: PropsType) {
     super(props)
 
-    const { pattern, root } = props
+    const { requireModules, pattern, root } = props
     const files = map(
       (item): TestFilesType => ({
         path: item,
@@ -70,12 +75,12 @@ class Store extends React.Component<PropsType, StoreStateType> {
         content: [],
         code: undefined,
         signal: undefined,
+        isLoading: false,
       })
     )(
       glob.sync(pattern, {
         absolute: true,
         cwd: root,
-        root,
       })
     )
 
@@ -85,19 +90,23 @@ class Store extends React.Component<PropsType, StoreStateType> {
         head,
         get("path")
       )(files),
+      runArgs: reduce((acc, item): string[] => [...acc, "-r", item], [])(
+        requireModules
+      ),
       isLoading: false,
     }
   }
 
   render = (): React.Node => {
     const { children } = this.props
-    const { files, filesSelectedPath, isLoading } = this.state
+    const { files, filesSelectedPath, runArgs, isLoading } = this.state
 
     return (
       <Provider
         value={{
           files,
           filesSelectedPath,
+          runArgs,
           isLoading,
           onFileSelect: this.handleTestFileRun,
         }}>
@@ -107,62 +116,16 @@ class Store extends React.Component<PropsType, StoreStateType> {
   }
 
   handleTestFileRun = (path: string) => {
-    const { require } = this.props
+    const { runArgs } = this.state
 
-    const testProcess = spawn(process.execPath, [path, ...require], {
-      detatched: false,
-      encoding: "utf8",
-    })
+    this.xHandleTestRun({ path, args: runArgs })
 
     this.setState({
       filesSelectedPath: path,
     })
-
-    // Main output
-    testProcess.stdout.on("data", data => {
-      this.setState(
-        (prevState): StoreStateType => ({
-          files: replaceBy(
-            { path },
-            (item: TestFilesType): TestFilesType => ({
-              ...item,
-              content: [path, ...require, ...item.content, data.toString()],
-            })
-          )(prevState.files),
-        })
-      )
-    })
-
-    // Error output
-    testProcess.stderr.on("data", data => {
-      this.setState(
-        (prevState): StoreStateType => ({
-          files: replaceBy(
-            { path },
-            (item: TestFilesType): TestFilesType => ({
-              ...item,
-              content: [...item.content, data.toString()],
-            })
-          )(prevState.files),
-        })
-      )
-    })
-
-    testProcess.on("exit", (code, signal) => {
-      this.setState(
-        (prevState): StoreStateType => ({
-          files: replaceBy(
-            { path },
-            (item: TestFilesType): TestFilesType => ({
-              ...item,
-              code,
-              signal,
-            })
-          )(prevState.files),
-        })
-      )
-    })
   }
+
+  xHandleTestRun = runTestFile(this.setState.bind(this))
 }
 
 export { Store, Consumer }

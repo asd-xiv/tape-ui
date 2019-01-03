@@ -29,15 +29,15 @@ screen.key(["escape", "q", "C-c"], () => {
 const render = createBlessedRenderer(blessed)
 
 type PropType = {
-  require: string[],
+  requireModules: string[],
   path: string,
   pattern: string,
 }
 
-export default ({ require, path, pattern }: PropType) => {
+export default ({ requireModules, path, pattern }: PropType) => {
   render(
     <Store
-      require={require}
+      requireModules={requireModules}
       pattern={pattern}
       root={resolve(join(process.cwd(), path))}>
       <MainPage />
