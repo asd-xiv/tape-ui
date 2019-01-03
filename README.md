@@ -6,6 +6,8 @@
 
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
 
+![Tape UI](docs/screenshot.png)
+
 ---
 
 <!-- MarkdownTOC levels="2,3" autolink="true" autoanchor="false" -->
