@@ -42,6 +42,16 @@ npm run tdd
 
 ## Use
 
+Add script in `package.json`
+
+```json
+{
+  "scripts": {
+    "tdd": "tape-ui -r @babel/register -p src -g '**/*.test.js'",
+  }
+}
+```
+
 ## Changelog
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
