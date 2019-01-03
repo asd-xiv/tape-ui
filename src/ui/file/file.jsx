@@ -48,7 +48,7 @@ class UIFile extends React.Component<PropsType, StateType> {
    */
   componentDidMount = () => {
     if (this.refBox) {
-      this.refBox
+      // this.refBox
     }
   }
 

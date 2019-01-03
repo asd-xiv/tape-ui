@@ -3,7 +3,6 @@
 const debug = require("debug")("TapeUI:UIListItem")
 
 import * as React from "react"
-import unicode from "figures"
 import chalk from "chalk"
 import { isEmpty } from "@asd14/m"
 

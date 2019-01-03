@@ -21,6 +21,7 @@ const screen = blessed.screen({
 })
 
 screen.key(["escape", "q", "C-c"], () => {
+  // eslint-disable-next-line unicorn/no-process-exit
   process.exit(0)
 })
 
