@@ -5,29 +5,23 @@ export const baseStyle = {
   mouse: true,
   scrollable: true,
   draggable: false,
-
   padding: {
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
   },
-
   scrollbar: {
     ch: " ",
     inverse: true,
+    fg: "blue",
   },
-
   border: {
     type: "line",
+    fg: "blue",
   },
-
   style: {
-    scrollbar: {
-      bg: "gray",
-    },
-    border: {
-      fg: "blue",
-    },
+    bg: "transparent",
+    fg: "white",
   },
 }

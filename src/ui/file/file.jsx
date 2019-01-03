@@ -11,6 +11,7 @@ import { baseStyle } from "./file.style"
 
 type PropsType = {|
   label: string,
+  path: string,
   top: number | string,
   left: number | string,
   width: number | string,
@@ -20,12 +21,35 @@ type PropsType = {|
   signal?: string,
 |}
 
-class UIFile extends React.Component<PropsType, {||}> {
+type StateType = {|
+  isDetailsVisible: boolean,
+|}
+
+class UIFile extends React.Component<PropsType, StateType> {
   static defaultProps = {
-    label: "",
-    content: [],
     code: NaN,
     signal: "-",
+  }
+
+  state = {
+    isDetailsVisible: false,
+  }
+
+  /**
+   * This function will be called only once in the whole life-cycle of a given
+   * component and it being called signalizes that the component and all its
+   * sub-components rendered properly.
+   *
+   * DO
+   *  - cause side effects (AJAX calls etc.)
+   *
+   * DON'T
+   *  - call this.setState as it will result in a re-render
+   */
+  componentDidMount = () => {
+    if (this.refBox) {
+      this.refBox
+    }
   }
 
   /**
@@ -65,7 +89,8 @@ class UIFile extends React.Component<PropsType, {||}> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { label, top, left, width, height, content, code } = this.props
+    const { label, path, top, left, width, height, content, code } = this.props
+    const { isDetailsVisible } = this.state
 
     const color = isEmpty(code)
       ? chalk.blue
@@ -73,8 +98,9 @@ class UIFile extends React.Component<PropsType, {||}> {
       ? chalk.green
       : chalk.red
 
-    return (
+    return [
       <text
+        key="file-content"
         ref={this.linkRefBox}
         class={baseStyle}
         label={
@@ -87,8 +113,9 @@ class UIFile extends React.Component<PropsType, {||}> {
         width={width}
         height={height}
         content={content.join("\n")}
-      />
-    )
+      />,
+      isDetailsVisible ? <text key="file-info">path: {path}</text> : null,
+    ]
   }
 
   /**

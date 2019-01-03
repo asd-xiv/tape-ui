@@ -11,6 +11,7 @@ import { baseStyle } from "./list.style"
 type UIListItemType = {|
   id: string,
   label: string,
+  code?: number,
 |}
 
 type PropsType = {|
@@ -51,11 +52,11 @@ class UIList extends React.Component<PropsType, StateType> {
   componentDidMount = () => {
     // hook into children mouse wheel events
     this.refBox.on("element wheeldown", (/* el, mouse */) => {
-      this.refBox.scroll(5)
+      this.refBox.scroll(this.refBox.getScrollHeight() / 2)
     })
 
     this.refBox.on("element wheelup", (/* el, mouse */) => {
-      this.refBox.scroll(-5)
+      this.refBox.scroll(-this.refBox.getScrollHeight() / 2)
     })
   }
 
@@ -84,6 +85,7 @@ class UIList extends React.Component<PropsType, StateType> {
             <UIListItem
               key={item.id}
               id={item.id}
+              code={item.code}
               label={item.label}
               top={index}
               isSelected={selectedId === item.id}

@@ -3,12 +3,16 @@
 const debug = require("debug")("TapeUI:UIListItem")
 
 import * as React from "react"
+import unicode from "figures"
+import chalk from "chalk"
+import { isEmpty } from "@asd14/m"
 
-import { baseStyle, isSelectedStyle } from "./list__item.style"
+import { baseStyle, isSelectedStyle, labelStyle } from "./list__item.style"
 
 type PropsType = {|
   id: string,
   label: string,
+  code?: number,
   top: number,
   isSelected?: boolean,
   onClick?: (id: string, event: Object) => void,
@@ -17,6 +21,7 @@ type PropsType = {|
 
 export class UIListItem extends React.PureComponent<PropsType> {
   static defaultProps = {
+    code: undefined,
     isSelected: false,
     onClick: undefined,
     onDblClick: undefined,
@@ -34,8 +39,11 @@ export class UIListItem extends React.PureComponent<PropsType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
-    if (this.refBox) {
-      this.refBox.on("click", this.handleMouseClick)
+    if (this.labelRef) {
+      this.labelRef.on("click", this.handleMouseClick)
+    }
+    if (this.statusRef) {
+      this.statusRef.on("click", this.handleMouseClick)
     }
   }
 
@@ -48,16 +56,31 @@ export class UIListItem extends React.PureComponent<PropsType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { label, top, isSelected } = this.props
+    const { id, label, code, top, isSelected } = this.props
 
-    return (
+    return [
       <box
-        ref={this.handleRef}
+        key={`item-label-${id}`}
+        ref={this.handleLabelRef}
         class={[baseStyle, isSelected && isSelectedStyle]}
         top={top}
         content={label}
-      />
-    )
+      />,
+      <box
+        key={`item-status-${id}`}
+        ref={this.handleStatusRef}
+        class={labelStyle}
+        padding={0}
+        top={top}
+        content={
+          isEmpty(code)
+            ? chalk.bgBlue(" ")
+            : code === 0
+            ? chalk.bgGreen(" ")
+            : chalk.bgRed(" ")
+        }
+      />,
+    ]
   }
 
   /**
@@ -67,8 +90,12 @@ export class UIListItem extends React.PureComponent<PropsType> {
    *
    * @return {undefined}
    */
-  handleRef = (ref: Object) => {
-    this.refBox = ref
+  handleLabelRef = (ref: Object) => {
+    this.labelRef = ref
+  }
+
+  handleStatusRef = (ref: Object) => {
+    this.statusRef = ref
   }
 
   /**
@@ -86,5 +113,7 @@ export class UIListItem extends React.PureComponent<PropsType> {
   }
 
   // reference to the blessed element
-  refBox = undefined
+  labelRef = {}
+
+  statusRef = {}
 }

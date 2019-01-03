@@ -1,6 +1,6 @@
 export const baseStyle = {
-  left: 1,
-  width: "99%-4",
+  left: 2,
+  width: "100%-5",
   height: 1,
   clickable: true,
   padding: {
@@ -11,15 +11,27 @@ export const baseStyle = {
   },
   style: {
     bg: "transparent",
-    fg: "white",
+    fg: "blue",
     bold: false,
   },
 }
 
 export const isSelectedStyle = {
   style: {
-    bg: "white",
-    fg: "black",
+    bg: "transparent",
+    fg: "white",
     bold: true,
+  },
+}
+
+export const labelStyle = {
+  left: 1,
+  width: 1,
+  height: 1,
+  clickable: true,
+  padding: 0,
+  style: {
+    bg: "transparent",
+    bold: false,
   },
 }
