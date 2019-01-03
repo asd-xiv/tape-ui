@@ -8,12 +8,12 @@ import type { StoreStateType, TestFilesType } from "./store"
 
 type CMDDefType = {|
   path: string,
-  args: string[],
+  args?: string[],
 |}
 
-export const runTestFile = setState => ({
+export const runTestFile = (setState: Function): Function => ({
   path,
-  args,
+  args = [],
 }: CMDDefType): ChildProcess => {
   const tapeProcess = spawn("tape", [path, ...args], {
     cwd: process.cwd(),

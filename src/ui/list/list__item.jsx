@@ -4,14 +4,13 @@ const debug = require("debug")("TapeUI:UIListItem")
 
 import * as React from "react"
 import chalk from "chalk"
-import { isEmpty } from "@asd14/m"
 
 import { baseStyle, isSelectedStyle, labelStyle } from "./list__item.style"
 
 type PropsType = {|
   id: string,
   label: string,
-  code?: number,
+  code: number,
   top: number,
   isSelected?: boolean,
   isLoading?: boolean,
@@ -21,7 +20,7 @@ type PropsType = {|
 
 export class UIListItem extends React.PureComponent<PropsType> {
   static defaultProps = {
-    code: undefined,
+    code: -1,
     isSelected: false,
     isLoading: false,
     onClick: undefined,
