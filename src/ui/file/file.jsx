@@ -105,8 +105,8 @@ class UIFile extends React.Component<PropsType, StateType> {
         class={baseStyle}
         label={
           isEmpty(label)
-            ? ` | no file selected |`
-            : ` | ${color(unicode.square)} ${label} | `
+            ? `[ no file selected ]`
+            : `[ ${color(unicode.square)} ${label} ]`
         }
         top={top}
         left={left}

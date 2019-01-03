@@ -12,6 +12,7 @@ type UIListItemType = {|
   id: string,
   label: string,
   code?: number,
+  isLoading: boolean,
 |}
 
 type PropsType = {|
@@ -75,7 +76,7 @@ class UIList extends React.Component<PropsType, StateType> {
       <box
         ref={this.linkRefBox}
         class={baseStyle}
-        label={` | ${items.length} test files | `}
+        label={`[ ${items.length} test files ]`}
         top={top}
         left={left}
         width={width}
@@ -89,6 +90,7 @@ class UIList extends React.Component<PropsType, StateType> {
               label={item.label}
               top={index}
               isSelected={selectedId === item.id}
+              isLoading={item.isLoading}
               onClick={this.handleItemClick}
               onDblClick={this.handleItemClick}
             />

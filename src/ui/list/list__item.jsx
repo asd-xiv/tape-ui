@@ -14,6 +14,7 @@ type PropsType = {|
   code?: number,
   top: number,
   isSelected?: boolean,
+  isLoading?: boolean,
   onClick?: (id: string, event: Object) => void,
   onDblClick?: (id: string, event: Object) => void,
 |}
@@ -22,6 +23,7 @@ export class UIListItem extends React.PureComponent<PropsType> {
   static defaultProps = {
     code: undefined,
     isSelected: false,
+    isLoading: false,
     onClick: undefined,
     onDblClick: undefined,
   }
@@ -55,7 +57,7 @@ export class UIListItem extends React.PureComponent<PropsType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { id, label, code, top, isSelected } = this.props
+    const { id, label, code, top, isSelected, isLoading } = this.props
 
     return [
       <box
@@ -72,11 +74,13 @@ export class UIListItem extends React.PureComponent<PropsType> {
         padding={0}
         top={top}
         content={
-          isEmpty(code)
+          isLoading
             ? chalk.bgBlue(" ")
             : code === 0
             ? chalk.bgGreen(" ")
-            : chalk.bgRed(" ")
+            : code > 0
+            ? chalk.bgRed(" ")
+            : ""
         }
       />,
     ]
