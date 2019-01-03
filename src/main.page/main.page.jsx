@@ -8,6 +8,7 @@ import { map, findBy } from "@asd14/m"
 import { Consumer } from "../store"
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
+import { UIDebug } from "../ui/debug/debug"
 
 import type { StoreStateType, TestFilesType } from "../store"
 import type { UIListItemType } from "../ui/list/list"
@@ -17,6 +18,7 @@ export const MainPage = (): React.Node => (
     {({
       files = [],
       filesSelectedPath = "",
+      runArgs = [],
       onFileSelect,
     }: StoreStateType): React.Node => {
       const filesSelected: TestFilesType =
@@ -35,6 +37,7 @@ export const MainPage = (): React.Node => (
               id: item.path,
               label: item.name,
               code: item.code,
+              isLoading: item.isLoading,
             })
           )(Object.values(files))}
           onSelect={onFileSelect}
@@ -46,10 +49,24 @@ export const MainPage = (): React.Node => (
           top={0}
           left="30%"
           width="70%"
-          height="100%"
+          height="70%"
           content={filesSelected.content}
           code={filesSelected.code}
           signal={filesSelected.signal}
+        />,
+        <UIDebug
+          key="debug"
+          label="Debug"
+          value={{
+            Node: process.execPath,
+            Path: filesSelected.path,
+            Args: runArgs,
+            "Exit code": filesSelected.code,
+          }}
+          top="70%"
+          left="30%"
+          width="70%"
+          height="30%"
         />,
       ]
     }}
