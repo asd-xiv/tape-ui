@@ -1,13 +1,12 @@
 // @flow
 
-const debug = require("debug")("TapeUI:MainPageState")
+const debug = require("debug")("TapeUI:Store")
 
 import * as React from "react"
+import glob from "glob"
 import { spawn } from "child_process"
 import { basename } from "path"
-import { replaceBy, head, get, pipe, findFiles, reduce } from "@asd14/m"
-
-import {} from "./actions"
+import { map, replaceBy, head, get, pipe } from "@asd14/m"
 
 type TestFilesType = {|
   path: string,
@@ -18,7 +17,8 @@ type TestFilesType = {|
 |}
 
 type PropsType = {|
-  pattern: RegExp,
+  require: string[],
+  pattern: string,
   root: string,
   children: React.Node,
 |}
@@ -63,22 +63,21 @@ class Store extends React.Component<PropsType, StoreStateType> {
     super(props)
 
     const { pattern, root } = props
-    const files = pipe(
-      findFiles(pattern),
-      reduce(
-        (acc, filePath): TestFilesType[] => [
-          ...acc,
-          {
-            path: filePath,
-            name: basename(filePath),
-            content: [],
-            code: undefined,
-            signal: undefined,
-          },
-        ],
-        []
-      )
-    )(root)
+    const files = map(
+      (item): TestFilesType => ({
+        path: item,
+        name: basename(item),
+        content: [],
+        code: undefined,
+        signal: undefined,
+      })
+    )(
+      glob.sync(pattern, {
+        absolute: true,
+        cwd: root,
+        root,
+      })
+    )
 
     this.state = {
       files,
@@ -108,9 +107,9 @@ class Store extends React.Component<PropsType, StoreStateType> {
   }
 
   handleTestFileRun = (path: string) => {
-    const testProcess = spawn("node", [path], {
-      cwd: process.cwd(),
-      env: process.env,
+    const { require } = this.props
+
+    const testProcess = spawn(process.execPath, [path, ...require], {
       detatched: false,
       encoding: "utf8",
     })
@@ -127,7 +126,7 @@ class Store extends React.Component<PropsType, StoreStateType> {
             { path },
             (item: TestFilesType): TestFilesType => ({
               ...item,
-              content: [...item.content, data.toString()],
+              content: [path, ...require, ...item.content, data.toString()],
             })
           )(prevState.files),
         })

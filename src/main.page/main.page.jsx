@@ -5,11 +5,11 @@ const debug = require("debug")("TapeUI:MainPage")
 import * as React from "react"
 import { map, findBy } from "@asd14/m"
 
-import { Consumer } from "../state"
+import { Consumer } from "../store"
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
 
-import type { StoreStateType, TestFilesType } from "../state"
+import type { StoreStateType, TestFilesType } from "../store"
 import type { UIListItemType } from "../ui/list/list"
 
 export const MainPage = (): React.Node => (
@@ -19,7 +19,8 @@ export const MainPage = (): React.Node => (
       filesSelectedPath = "",
       onFileSelect,
     }: StoreStateType): React.Node => {
-      const filesSelected = findBy({ path: filesSelectedPath })(files) ?? {}
+      const filesSelected: TestFilesType =
+        findBy({ path: filesSelectedPath })(files) ?? {}
 
       return [
         <UIList
@@ -33,6 +34,7 @@ export const MainPage = (): React.Node => (
             (item: TestFilesType): UIListItemType => ({
               id: item.path,
               label: item.name,
+              code: item.code,
             })
           )(Object.values(files))}
           onSelect={onFileSelect}
@@ -40,6 +42,7 @@ export const MainPage = (): React.Node => (
         <UIFile
           key="files-selected"
           label={filesSelected.name}
+          path={filesSelected.path}
           top={0}
           left="30%"
           width="70%"
