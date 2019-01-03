@@ -19,6 +19,14 @@
   "bin": {
     "tape-ui": "bin/cli.js"
   },
+  "keywords": [
+    "terminal",
+    "cli",
+    "testing",
+    "tape",
+    "tap",
+    "blessed"
+  ],
   "scripts": {
     "----UTILS------------------------------------": "",
     "clean": "rm -rf dist/* && rm -rf ./node_modules && rm -rf ./flow-typed",
