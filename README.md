@@ -14,7 +14,7 @@
 - [Develop](#develop)
 - [Use](#use)
 - [Changelog](#changelog)
-    - [0.1.0 - 1 January 2019](#010---1-january-2019)
+    - [0.2.0 - 3 January 2019](#020---3-january-2019)
 
 <!-- /MarkdownTOC -->
 
@@ -44,6 +44,9 @@ npm run tdd
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.1.0 - 1 January 2019
+### 0.2.0 - 3 January 2019
 
-First
+#### Add
+
+- [`UIDebug`](src/ui/debug/debug.jsx) component
+- Babel support by passing `-r` parameter to internal `tape` process
