@@ -5,10 +5,10 @@ export const baseStyle = {
   mouse: true,
   scrollable: true,
   padding: {
-    top: 1,
+    top: 0,
     left: 2,
-    bottom: 1,
-    right: 1,
+    bottom: 0,
+    right: 0,
   },
   scrollbar: {
     ch: " ",

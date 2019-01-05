@@ -73,7 +73,7 @@ export class UIListItem extends React.PureComponent<PropsType> {
         ref={this.handleLabelRef}
         class={[baseStyle, isSelected && isSelectedStyle]}
         top={top}
-        content={isSelected ? ` ${label}` : label}
+        content={label}
       />,
     ]
   }

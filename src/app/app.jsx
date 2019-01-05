@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { map, findBy } from "@asd14/m"
+import { findBy, map } from "@asd14/m"
 
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
@@ -104,7 +104,7 @@ class App extends React.Component<PropsType> {
   }
 
   /**
-   * Links a reference box.
+   * Link to blessed wrapper object
    *
    * @param  {Object}  ref  The reference object
    *
