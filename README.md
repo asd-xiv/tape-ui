@@ -1,8 +1,6 @@
 <!-- markdownlint-disable first-line-h1 line-length -->
 
-[![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
-
-# Tape UI
+# Tape UI [![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
 
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
 
@@ -16,7 +14,7 @@
 - [Develop](#develop)
 - [Use](#use)
 - [Changelog](#changelog)
-    - [0.2.0 - 3 January 2019](#020---3-january-2019)
+    - [0.3.0 - 5 January 2019](#030---5-january-2019)
 
 <!-- /MarkdownTOC -->
 
@@ -56,9 +54,15 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.2.0 - 3 January 2019
+### 0.3.0 - 5 January 2019
 
 #### Add
 
-- [`UIDebug`](src/ui/debug/debug.jsx) component
-- Babel support by passing `-r` parameter to internal `tape` process
+- `i` shortcut to toggle Debug window
+- Help menu
+
+#### Change
+
+- Remove `dblClick` from list item
+- Debug window hidden by default
+- Overlap borders to save space

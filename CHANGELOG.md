@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.3.0] - 5 January 2019
+
+### Add
+
+- `i` shortcut to toggle Debug window
+- Help menu
+
+### Change
+
+- Remove `dblClick` from list item
+- Debug window hidden by default
+- Overlap borders to save space
+
 ## [0.2.0] - 3 January 2019
 
 ### Add
@@ -20,7 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 First
 
-[Unreleased]: https://github.com/asd14/tape-ui/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/asd14/tape-ui/compare/v0.3.0...HEAD
 
+[0.3.0]: https://github.com/asd14/tape-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/asd14/tape-ui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/asd14/tape-ui/compare/v0.1.0
