@@ -6,6 +6,7 @@ import { map, findBy } from "@asd14/m"
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
 import { UIDebug } from "../ui/debug/debug"
+import { UIMenu } from "../ui/menu/menu"
 
 import type { StoreStateType, TestFilesType } from "./store"
 import type { UIListItemType } from "../ui/list/list"
@@ -84,7 +85,7 @@ class App extends React.Component<PropsType> {
         />
         {isDebugVisible ? (
           <UIDebug
-            label="Debug"
+            label="Details"
             value={{
               Node: process.execPath,
               Path: filesSelected.path,
@@ -97,21 +98,7 @@ class App extends React.Component<PropsType> {
             height="30%"
           />
         ) : null}
-        <box
-          top="100%-1"
-          left="0"
-          width="50%"
-          tags={true}
-          transparent={false}
-          content="{white-bg}{black-fg}C-c{/} Exit {white-bg}{black-fg}i{/} Toggle debug"
-        />
-        <box
-          top="100%-1"
-          right="0"
-          width="50%"
-          tags={true}
-          content={`{right}${name} v${version}{/right}`}
-        />
+        <UIMenu name={name} version={version} isDebugVisible={isDebugVisible} />
       </box>
     )
   }
