@@ -1,14 +1,15 @@
 // @flow
 
-const debug = require("debug")("TapeUI:Index")
-
 import * as React from "react"
 import blessed from "neo-blessed"
 import { resolve, join } from "path"
 import { createBlessedRenderer } from "react-blessed"
 
-import { MainPage } from "./main.page/main.page"
-import { Store } from "./store"
+import { App } from "./app/app"
+import { Store, Consumer } from "./app/store"
+import pkg from "../package.json"
+
+import type { StoreStateType } from "./app/store"
 
 //
 const screen = blessed.screen({
@@ -18,11 +19,6 @@ const screen = blessed.screen({
   smartCSR: true,
   dockBorders: true,
   fullUnicode: true,
-})
-
-screen.key(["escape", "q", "C-c"], () => {
-  // eslint-disable-next-line unicorn/no-process-exit
-  process.exit(0)
 })
 
 //
@@ -40,7 +36,11 @@ export default ({ requireModules, path, pattern }: PropType) => {
       requireModules={requireModules}
       pattern={pattern}
       root={resolve(join(process.cwd(), path))}>
-      <MainPage />
+      <Consumer>
+        {(storeState: StoreStateType): React.Node => (
+          <App name="Tape UI" version={pkg.version} {...storeState} />
+        )}
+      </Consumer>
     </Store>,
     screen
   )

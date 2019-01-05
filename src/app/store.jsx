@@ -1,13 +1,11 @@
 // @flow
 
-const debug = require("debug")("TapeUI:Store")
-
 import * as React from "react"
 import glob from "glob"
 import { basename } from "path"
 import { reduce, map, head, get, pipe } from "@asd14/m"
 
-import { runTestFile } from "./actions"
+import { handleTestFileRun, handleDebugToggle } from "./actions"
 
 type TestFilesType = {|
   path: string,
@@ -25,13 +23,15 @@ type PropsType = {|
   children: React.Node,
 |}
 
-type StoreStateType = {|
+type StoreStateType = {
   files?: TestFilesType[],
   filesSelectedPath?: string,
   runArgs?: string[],
   isLoading?: boolean,
+  isDebugVisible?: boolean,
   onFileSelect?: (path: string) => void,
-|}
+  onDebugToggle?: () => void,
+}
 
 const { Provider, Consumer } = React.createContext<StoreStateType>({
   files: [],
@@ -41,13 +41,6 @@ const { Provider, Consumer } = React.createContext<StoreStateType>({
 })
 
 class Store extends React.Component<PropsType, StoreStateType> {
-  state = {
-    files: [],
-    filesSelectedPath: "",
-    runArgs: [],
-    isLoading: false,
-  }
-
   /**
    * The constructor for a React component is called before it is mounted.
    * When implementing the constructor for a React.Component subclass, you
@@ -78,7 +71,7 @@ class Store extends React.Component<PropsType, StoreStateType> {
         isLoading: false,
       })
     )(
-      glob.sync(pattern, {
+      glob.sync(`**/${pattern}`, {
         absolute: true,
         cwd: root,
       })
@@ -94,12 +87,25 @@ class Store extends React.Component<PropsType, StoreStateType> {
         requireModules
       ),
       isLoading: false,
+      isDebugVisible: false,
     }
+
+    this.xHandleDebugToggle = handleDebugToggle(this.setState.bind(this))
+    this.xHandleTestFileRun = handleTestFileRun(
+      this.state,
+      this.setState.bind(this)
+    )
   }
 
   render = (): React.Node => {
     const { children } = this.props
-    const { files, filesSelectedPath, runArgs, isLoading } = this.state
+    const {
+      files,
+      filesSelectedPath,
+      runArgs,
+      isLoading,
+      isDebugVisible,
+    } = this.state
 
     return (
       <Provider
@@ -108,24 +114,18 @@ class Store extends React.Component<PropsType, StoreStateType> {
           filesSelectedPath,
           runArgs,
           isLoading,
-          onFileSelect: this.handleTestFileRun,
+          isDebugVisible,
+          onFileSelect: this.xHandleTestFileRun,
+          onDebugToggle: this.xHandleDebugToggle,
         }}>
         {children}
       </Provider>
     )
   }
 
-  handleTestFileRun = (path: string) => {
-    const { runArgs } = this.state
+  xHandleDebugToggle = undefined
 
-    this.xHandleTestRun({ path, args: runArgs })
-
-    this.setState({
-      filesSelectedPath: path,
-    })
-  }
-
-  xHandleTestRun = runTestFile(this.setState.bind(this))
+  xHandleTestFileRun = undefined
 }
 
 export { Store, Consumer }
