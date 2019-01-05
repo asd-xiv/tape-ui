@@ -1,11 +1,9 @@
 // @flow
 
-const debug = require("debug")("TapeUI:UIListItem")
-
 import * as React from "react"
-import chalk from "chalk"
+import figures from "figures"
 
-import { baseStyle, isSelectedStyle, labelStyle } from "./list__item.style"
+import { baseStyle, isSelectedStyle, statusIconStyle } from "./list__item.style"
 
 type PropsType = {|
   id: string,
@@ -15,7 +13,6 @@ type PropsType = {|
   isSelected?: boolean,
   isLoading?: boolean,
   onClick?: (id: string, event: Object) => void,
-  onDblClick?: (id: string, event: Object) => void,
 |}
 
 export class UIListItem extends React.PureComponent<PropsType> {
@@ -24,7 +21,6 @@ export class UIListItem extends React.PureComponent<PropsType> {
     isSelected: false,
     isLoading: false,
     onClick: undefined,
-    onDblClick: undefined,
   }
 
   /**
@@ -58,29 +54,26 @@ export class UIListItem extends React.PureComponent<PropsType> {
   render = (): React.Node => {
     const { id, label, code, top, isSelected, isLoading } = this.props
 
+    const color = isLoading
+      ? "{blue-fg}"
+      : code === 0
+      ? "{green-fg}"
+      : "{red-fg}"
+
     return [
+      <box
+        key={`item-status-${id}`}
+        ref={this.handleStatusRef}
+        class={statusIconStyle}
+        top={top}
+        content={`${color}${figures.squareSmallFilled}{/}`}
+      />,
       <box
         key={`item-label-${id}`}
         ref={this.handleLabelRef}
         class={[baseStyle, isSelected && isSelectedStyle]}
         top={top}
-        content={label}
-      />,
-      <box
-        key={`item-status-${id}`}
-        ref={this.handleStatusRef}
-        class={labelStyle}
-        padding={0}
-        top={top}
-        content={
-          isLoading
-            ? chalk.bgBlue(" ")
-            : code === 0
-            ? chalk.bgGreen(" ")
-            : code > 0
-            ? chalk.bgRed(" ")
-            : ""
-        }
+        content={isSelected ? ` ${label}` : label}
       />,
     ]
   }
@@ -108,10 +101,9 @@ export class UIListItem extends React.PureComponent<PropsType> {
    * @return {undefined}
    */
   handleMouseClick = (event: Object) => {
-    const { id, isSelected, onClick, onDblClick } = this.props
+    const { id, onClick } = this.props
 
     onClick && onClick(id, event)
-    onDblClick && isSelected && onDblClick(id, event)
   }
 
   // reference to the blessed element

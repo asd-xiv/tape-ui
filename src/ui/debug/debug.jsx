@@ -1,7 +1,5 @@
 // @flow
 
-const debug = require("debug")("TapeUI:UIDebug")
-
 import * as React from "react"
 import { map, pipe, join } from "@asd14/m"
 

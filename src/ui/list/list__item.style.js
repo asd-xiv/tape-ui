@@ -1,37 +1,38 @@
 export const baseStyle = {
-  left: 2,
-  width: "100%-5",
+  left: 3,
+  width: "100%-7",
   height: 1,
-  clickable: true,
   padding: {
     top: 0,
     left: 1,
     bottom: 0,
     right: 0,
   },
+  clickable: true,
   style: {
+    fg: "white",
     bg: "transparent",
-    fg: "blue",
     bold: false,
   },
 }
 
 export const isSelectedStyle = {
   style: {
-    bg: "transparent",
     fg: "white",
+    bg: "transparent",
     bold: true,
   },
 }
 
-export const labelStyle = {
+export const statusIconStyle = {
   left: 1,
   width: 1,
   height: 1,
-  clickable: true,
   padding: 0,
+  clickable: true,
+  tags: true,
   style: {
     bg: "transparent",
-    bold: false,
+    fg: "white",
   },
 }

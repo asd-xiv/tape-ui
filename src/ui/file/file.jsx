@@ -1,10 +1,6 @@
 // @flow
 
-const debug = require("debug")("TapeUI:UIFile")
-
 import * as React from "react"
-import unicode from "figures"
-import chalk from "chalk"
 import { isEmpty } from "@asd14/m"
 
 import { baseStyle } from "./file.style"
@@ -19,37 +15,16 @@ type PropsType = {|
   content: string[],
   code?: number,
   signal?: string,
+  isLoading?: boolean,
 |}
 
-type StateType = {|
-  isDetailsVisible: boolean,
-|}
+type StateType = {||}
 
 class UIFile extends React.Component<PropsType, StateType> {
   static defaultProps = {
     code: NaN,
     signal: "-",
-  }
-
-  state = {
-    isDetailsVisible: false,
-  }
-
-  /**
-   * This function will be called only once in the whole life-cycle of a given
-   * component and it being called signalizes that the component and all its
-   * sub-components rendered properly.
-   *
-   * DO
-   *  - cause side effects (AJAX calls etc.)
-   *
-   * DON'T
-   *  - call this.setState as it will result in a re-render
-   */
-  componentDidMount = () => {
-    if (this.refBox) {
-      // this.refBox
-    }
+    isLoading: false,
   }
 
   /**
@@ -89,33 +64,20 @@ class UIFile extends React.Component<PropsType, StateType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { label, path, top, left, width, height, content, code } = this.props
-    const { isDetailsVisible } = this.state
+    const { label, top, left, width, height, content } = this.props
 
-    const color = isEmpty(code)
-      ? chalk.blue
-      : code === 0
-      ? chalk.green
-      : chalk.red
-
-    return [
-      <text
-        key="file-content"
+    return (
+      <box
         ref={this.linkRefBox}
         class={baseStyle}
-        label={
-          isEmpty(label)
-            ? `[ no file selected ]`
-            : `[ ${color(unicode.square)} ${label} ]`
-        }
+        label={`[ ${isEmpty(label) ? "no file selected" : label} ]`}
         top={top}
         left={left}
         width={width}
         height={height}
         content={content.join("\n")}
-      />,
-      isDetailsVisible ? <text key="file-info">path: {path}</text> : null,
-    ]
+      />
+    )
   }
 
   /**

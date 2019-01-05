@@ -1,7 +1,5 @@
 // @flow
 
-const debug = require("debug")("TapeUI:UIList")
-
 import * as React from "react"
 import { map } from "@asd14/m"
 
@@ -76,7 +74,7 @@ class UIList extends React.Component<PropsType, StateType> {
       <box
         ref={this.linkRefBox}
         class={baseStyle}
-        label={`[ ${items.length} test files ]`}
+        label={`[ ${items.length} files ]`}
         top={top}
         left={left}
         width={width}
@@ -92,7 +90,6 @@ class UIList extends React.Component<PropsType, StateType> {
               isSelected={selectedId === item.id}
               isLoading={item.isLoading}
               onClick={this.handleItemClick}
-              onDblClick={this.handleItemClick}
             />
           )
         )(items)}

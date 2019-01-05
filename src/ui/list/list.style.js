@@ -4,24 +4,28 @@ export const baseStyle = {
   tags: true,
   mouse: true,
   scrollable: true,
-  draggable: false,
   padding: {
     top: 0,
-    left: 0,
+    left: 1,
     bottom: 0,
     right: 0,
   },
   scrollbar: {
     ch: " ",
     inverse: true,
-    fg: "blue",
   },
   border: {
     type: "line",
-    fg: "blue",
+    fg: "white",
+    bold: true,
   },
   style: {
     bg: "transparent",
-    fg: "white",
+
+    focus: {
+      border: {
+        fg: "blue",
+      },
+    },
   },
 }
