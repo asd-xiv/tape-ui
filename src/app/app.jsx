@@ -14,6 +14,7 @@ import type { UIListItemType } from "../ui/list/list"
 type PropsType = {
   name: string,
   version: string,
+  projectName: string,
 } & StoreStateType
 
 class App extends React.Component<PropsType> {
@@ -45,6 +46,7 @@ class App extends React.Component<PropsType> {
     const {
       name,
       version,
+      projectName,
       files,
       filesSelectedPath,
       runArgs,
@@ -58,6 +60,7 @@ class App extends React.Component<PropsType> {
       <box ref={this.linkRefApp}>
         <UIList
           selectedId={filesSelected.path}
+          label={projectName}
           top="0"
           left="0"
           width="30%+1"

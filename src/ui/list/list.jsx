@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { map } from "@asd14/m"
+import { map, isEmpty } from "@asd14/m"
 
 import { UIListItem } from "./list__item"
 import { baseStyle } from "./list.style"
@@ -14,7 +14,8 @@ type UIListItemType = {|
 |}
 
 type PropsType = {|
-  selectedId?: string,
+  selectedId: string,
+  label: string,
   top?: number | string,
   left?: number | string,
   width?: number | string,
@@ -29,7 +30,8 @@ type StateType = {|
 
 class UIList extends React.Component<PropsType, StateType> {
   static defaultProps = {
-    selectedId: undefined,
+    selectedId: "",
+    label: "",
     top: "center",
     left: "center",
     width: "50%",
@@ -49,13 +51,15 @@ class UIList extends React.Component<PropsType, StateType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
+    this.refBox.scrollTo(0)
+
     // hook into children mouse wheel events
     this.refBox.on("element wheeldown", (/* el, mouse */) => {
-      this.refBox.scroll(this.refBox.getScrollHeight() / 2)
+      this.refBox.scroll(this.refBox.height - 2)
     })
 
     this.refBox.on("element wheelup", (/* el, mouse */) => {
-      this.refBox.scroll(-this.refBox.getScrollHeight() / 2)
+      this.refBox.scroll(-(this.refBox.height - 2))
     })
   }
 
@@ -68,13 +72,17 @@ class UIList extends React.Component<PropsType, StateType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { selectedId, top, left, width, height, items } = this.props
+    const { selectedId, label, top, left, width, height, items } = this.props
 
     return (
       <box
         ref={this.linkRefBox}
         class={baseStyle}
-        label={`[ ${items.length} files ]`}
+        label={
+          isEmpty(label)
+            ? ` ${items.length} files `
+            : ` ${label} | ${items.length} files `
+        }
         top={top}
         left={left}
         width={width}
@@ -85,7 +93,7 @@ class UIList extends React.Component<PropsType, StateType> {
               key={item.id}
               id={item.id}
               code={item.code}
-              label={item.label}
+              label={`${index + 1} ${item.label}`}
               top={index}
               isSelected={selectedId === item.id}
               isLoading={item.isLoading}

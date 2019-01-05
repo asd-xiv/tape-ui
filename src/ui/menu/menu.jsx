@@ -50,7 +50,7 @@ class UIMenu extends React.PureComponent<PropsType> {
       <box
         key="title"
         class={[baseStyle]}
-        top="100%"
+        top="100%-1"
         right="0"
         width="50%"
         content={`{right}${name} v${version}{/right}`}
