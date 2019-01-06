@@ -35,6 +35,7 @@ class UIMenu extends React.PureComponent<PropsType> {
       )
     )({
       i: isDebugVisible ? "Hide details" : "Show details",
+      "Space|Enter": "Run",
       "C-c": "Exit",
     })
 

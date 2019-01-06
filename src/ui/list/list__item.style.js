@@ -1,11 +1,13 @@
 export const baseStyle = {
-  left: 3,
-  width: "100%-7",
+  left: 0,
+  width: "100%-4",
   height: 1,
+  keys: true,
   clickable: true,
+  tags: true,
   padding: {
     top: 0,
-    left: 0,
+    left: 1,
     bottom: 0,
     right: 0,
   },
@@ -18,26 +20,12 @@ export const baseStyle = {
 
 export const isSelectedStyle = {
   style: {
-    fg: "black",
-    bg: "white",
     bold: true,
   },
 }
-
-export const statusIconStyle = {
-  left: 1,
-  width: 1,
-  height: 1,
-  clickable: true,
-  tags: true,
-  padding: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
+export const isHoveredStyle = {
   style: {
-    bg: "transparent",
-    fg: "white",
+    fg: "black",
+    bg: "white",
   },
 }

@@ -3,7 +3,7 @@
 import * as React from "react"
 import figures from "figures"
 
-import { baseStyle, isSelectedStyle, statusIconStyle } from "./list__item.style"
+import { baseStyle, isSelectedStyle, isHoveredStyle } from "./list__item.style"
 
 type PropsType = {|
   id: string,
@@ -11,16 +11,18 @@ type PropsType = {|
   code: number,
   top: number,
   isSelected?: boolean,
+  isHovered?: boolean,
   isLoading?: boolean,
-  onClick?: (id: string, event: Object) => void,
+  onClick: (id: string, event: Object) => void,
+  onKeypress: (code: string, key: Object) => void,
 |}
 
 export class UIListItem extends React.PureComponent<PropsType> {
   static defaultProps = {
     code: -1,
     isSelected: false,
+    isHovered: false,
     isLoading: false,
-    onClick: undefined,
   }
 
   /**
@@ -35,12 +37,10 @@ export class UIListItem extends React.PureComponent<PropsType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
-    if (this.labelRef) {
-      this.labelRef.on("click", this.handleMouseClick)
-    }
-    if (this.statusRef) {
-      this.statusRef.on("click", this.handleMouseClick)
-    }
+    const { onKeypress } = this.props
+
+    this.labelRef.on("keypress", onKeypress)
+    this.labelRef.on("click", this.handleClick)
   }
 
   /**
@@ -52,7 +52,7 @@ export class UIListItem extends React.PureComponent<PropsType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { id, label, code, top, isSelected, isLoading } = this.props
+    const { label, code, top, isSelected, isHovered, isLoading } = this.props
 
     const color = isLoading
       ? "{blue-fg}"
@@ -60,22 +60,24 @@ export class UIListItem extends React.PureComponent<PropsType> {
       ? "{green-fg}"
       : "{red-fg}"
 
-    return [
+    return (
       <box
-        key={`item-status-${id}`}
-        ref={this.handleStatusRef}
-        class={statusIconStyle}
-        top={top}
-        content={`${color}${figures.squareSmallFilled}{/}`}
-      />,
-      <box
-        key={`item-label-${id}`}
         ref={this.handleLabelRef}
-        class={[baseStyle, isSelected && isSelectedStyle]}
+        class={[
+          baseStyle,
+          isSelected && isSelectedStyle,
+          isHovered && isHoveredStyle,
+        ]}
         top={top}
-        content={label}
-      />,
-    ]
+        content={`${color}${figures.squareSmallFilled}{/} ${label}`}
+      />
+    )
+  }
+
+  handleClick = (event: Object) => {
+    const { id, onClick } = this.props
+
+    onClick(id, event)
   }
 
   /**
@@ -89,25 +91,5 @@ export class UIListItem extends React.PureComponent<PropsType> {
     this.labelRef = ref
   }
 
-  handleStatusRef = (ref: Object) => {
-    this.statusRef = ref
-  }
-
-  /**
-   * { function_description }
-   *
-   * @param  {Object}  event  The event object
-   *
-   * @return {undefined}
-   */
-  handleMouseClick = (event: Object) => {
-    const { id, onClick } = this.props
-
-    onClick && onClick(id, event)
-  }
-
-  // reference to the blessed element
   labelRef = {}
-
-  statusRef = {}
 }

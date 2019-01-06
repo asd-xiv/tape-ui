@@ -1,6 +1,5 @@
 export const baseStyle = {
   keys: true,
-  vi: true,
   mouse: true,
   scrollable: true,
   padding: {
