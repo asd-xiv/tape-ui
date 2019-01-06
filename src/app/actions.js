@@ -37,7 +37,6 @@ export const handleTestFileRun = (
           isLoading: true,
         })
       )(prevState.files),
-      isLoading: true,
     }),
     () => {
       tapeProcess.stdout.on("data", data => {
@@ -80,7 +79,6 @@ export const handleTestFileRun = (
                 isLoading: false,
               })
             )(prevState.files),
-            isLoading: false,
           })
         )
       })

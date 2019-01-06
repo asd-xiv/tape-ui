@@ -18,11 +18,5 @@ export const baseStyle = {
     type: "line",
     fg: "white",
   },
-  style: {
-    focus: {
-      border: {
-        fg: "blue",
-      },
-    },
-  },
+  style: {},
 }

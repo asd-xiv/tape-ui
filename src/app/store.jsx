@@ -27,18 +27,8 @@ type StoreStateType = {
   files?: TestFilesType[],
   filesSelectedPath?: string,
   runArgs?: string[],
-  isLoading?: boolean,
   isDebugVisible?: boolean,
-  onFileSelect?: (path: string) => void,
-  onDebugToggle?: () => void,
 }
-
-const { Provider, Consumer } = React.createContext<StoreStateType>({
-  files: [],
-  filesSelectedPath: "",
-  runArgs: [],
-  isLoading: false,
-})
 
 class Store extends React.Component<PropsType, StoreStateType> {
   /**
@@ -86,7 +76,6 @@ class Store extends React.Component<PropsType, StoreStateType> {
       runArgs: reduce((acc, item): string[] => [...acc, "-r", item], [])(
         requireModules
       ),
-      isLoading: false,
       isDebugVisible: false,
     }
 
@@ -97,29 +86,33 @@ class Store extends React.Component<PropsType, StoreStateType> {
     )
   }
 
+  /**
+   * When called, it should examine this.props and this.state and return a
+   * single React element. This element can be either a representation of a
+   * native DOM component, such as <div />, or another composite component
+   * that you've defined yourself.
+   *
+   * @return {Component}
+   */
   render = (): React.Node => {
     const { children } = this.props
-    const {
-      files,
-      filesSelectedPath,
-      runArgs,
-      isLoading,
-      isDebugVisible,
-    } = this.state
+    const { files, filesSelectedPath, runArgs, isDebugVisible } = this.state
 
-    return (
-      <Provider
-        value={{
-          files,
-          filesSelectedPath,
-          runArgs,
-          isLoading,
-          isDebugVisible,
-          onFileSelect: this.xHandleTestFileRun,
-          onDebugToggle: this.xHandleDebugToggle,
-        }}>
-        {children}
-      </Provider>
+    return React.Children.map(
+      children,
+      (child): React.Node =>
+        React.cloneElement(child, {
+          store: {
+            files,
+            filesSelectedPath,
+            runArgs,
+            isDebugVisible,
+          },
+          actions: {
+            xHandleTestFileRun: this.xHandleTestFileRun,
+            xHandleDebugToggle: this.xHandleDebugToggle,
+          },
+        })
     )
   }
 
@@ -128,5 +121,5 @@ class Store extends React.Component<PropsType, StoreStateType> {
   xHandleTestFileRun = undefined
 }
 
-export { Store, Consumer }
+export { Store }
 export type { StoreStateType, TestFilesType }

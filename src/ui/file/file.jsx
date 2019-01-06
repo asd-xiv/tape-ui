@@ -18,9 +18,7 @@ type PropsType = {|
   isLoading?: boolean,
 |}
 
-type StateType = {||}
-
-class UIFile extends React.Component<PropsType, StateType> {
+class UIFile extends React.Component<PropsType, {}> {
   static defaultProps = {
     code: NaN,
     signal: "-",

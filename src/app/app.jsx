@@ -8,14 +8,25 @@ import { UIList } from "../ui/list/list"
 import { UIDebug } from "../ui/debug/debug"
 import { UIMenu } from "../ui/menu/menu"
 
-import type { StoreStateType, TestFilesType } from "./store"
+import type { TestFilesType } from "./store"
 import type { UIListItemType } from "../ui/list/list"
 
 type PropsType = {
   name: string,
   version: string,
   projectName: string,
-} & StoreStateType
+  projectVersion: string,
+  store: {
+    files: TestFilesType[],
+    filesSelectedPath: string,
+    runArgs: string[],
+    isDebugVisible: boolean,
+  },
+  actions: {
+    xHandleTestFileRun: (path: string) => void,
+    xHandleDebugToggle: () => void,
+  },
+}
 
 class App extends React.Component<PropsType> {
   /**
@@ -30,10 +41,12 @@ class App extends React.Component<PropsType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
-    const { onDebugToggle } = this.props
+    const {
+      actions: { xHandleDebugToggle },
+    } = this.props
 
     this.refApp.screen.key(["i"], () => {
-      onDebugToggle && onDebugToggle()
+      xHandleDebugToggle()
     })
 
     this.refApp.screen.key(["C-c"], () => {
@@ -47,11 +60,8 @@ class App extends React.Component<PropsType> {
       name,
       version,
       projectName,
-      files,
-      filesSelectedPath,
-      runArgs,
-      isDebugVisible,
-      onFileSelect,
+      store: { filesSelectedPath, files, runArgs, isDebugVisible },
+      actions: { xHandleTestFileRun },
     } = this.props
     const filesSelected: TestFilesType =
       findBy({ path: filesSelectedPath })(files) ?? {}
@@ -73,7 +83,7 @@ class App extends React.Component<PropsType> {
               isLoading: item.isLoading,
             })
           )(Object.values(files))}
-          onSelect={onFileSelect}
+          onSelect={xHandleTestFileRun}
         />
         <UIFile
           label={filesSelected.name}
@@ -98,7 +108,7 @@ class App extends React.Component<PropsType> {
             top="70%-1"
             left="30%"
             width="70%"
-            height="30%"
+            height="30%+1"
           />
         ) : null}
         <UIMenu name={name} version={version} isDebugVisible={isDebugVisible} />

@@ -6,9 +6,7 @@ import { resolve, join } from "path"
 import { createBlessedRenderer } from "react-blessed"
 
 import { App } from "./app/app"
-import { Store, Consumer } from "./app/store"
-
-import type { StoreStateType } from "./app/store"
+import { Store } from "./app/store"
 
 const pkg = require(`../package.json`)
 const projectPkg = require(`${process.cwd()}/package.json`)
@@ -38,16 +36,12 @@ export default ({ requireModules, path, pattern }: PropType) => {
       requireModules={requireModules}
       pattern={pattern}
       root={resolve(join(process.cwd(), path))}>
-      <Consumer>
-        {(storeState: StoreStateType): React.Node => (
-          <App
-            name="Tape UI"
-            version={pkg.version}
-            projectName={projectPkg.name}
-            {...storeState}
-          />
-        )}
-      </Consumer>
+      <App
+        name={pkg.name}
+        version={pkg.version}
+        projectName={projectPkg.name}
+        projectVersion={projectPkg.version}
+      />
     </Store>,
     screen
   )

@@ -25,11 +25,5 @@ export const baseStyle = {
     inverse: false,
     invisible: false,
     transparent: false,
-
-    focus: {
-      border: {
-        fg: "blue",
-      },
-    },
   },
 }

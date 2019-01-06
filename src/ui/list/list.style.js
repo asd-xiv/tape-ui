@@ -19,11 +19,5 @@ export const baseStyle = {
   },
   style: {
     bg: "transparent",
-
-    focus: {
-      border: {
-        fg: "blue",
-      },
-    },
   },
 }
