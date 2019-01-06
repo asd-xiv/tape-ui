@@ -2,9 +2,12 @@
 
 # Tape UI [![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
 
-> Terminal UI for [Tape](https://github.com/substack/tape) test runner
-
 ![Tape UI](docs/screenshot.png)
+
+> Terminal UI for [Tape](https://github.com/substack/tape) test runner
+> - Parallel testing
+> - Keyboard navigation with Vim shortcuts
+> - Babel support
 
 ---
 
@@ -14,7 +17,7 @@
 - [Develop](#develop)
 - [Use](#use)
 - [Changelog](#changelog)
-    - [0.3.0 - 5 January 2019](#030---5-january-2019)
+    - [0.4.0 - 6 January 2019](#040---6-january-2019)
 
 <!-- /MarkdownTOC -->
 
@@ -54,15 +57,8 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.3.0 - 5 January 2019
+### 0.4.0 - 6 January 2019
 
 #### Add
 
-- `i` shortcut to toggle Debug window
-- Help menu
-
-#### Change
-
-- Remove `dblClick` from list item
-- Debug window hidden by default
-- Overlap borders to save space
+- Keyboad navigation in main list: up, down, home, end, page-up, page-down and space for "Run file"
