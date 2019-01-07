@@ -11,21 +11,46 @@ type PropsType = {|
   isDebugVisible?: boolean,
 |}
 
-class UIMenu extends React.PureComponent<PropsType> {
+type StateType = {
+  memory: number,
+}
+
+class UIMenu extends React.PureComponent<PropsType, StateType> {
   static defaultProps = {
     isDebugVisible: false,
   }
 
+  state = {
+    memory: process.memoryUsage().rss,
+  }
+
   /**
-   * When called, it should examine this.props and this.state and return a
-   * single React element. This element can be either a representation of a
-   * native DOM component, such as <div />, or another composite component
-   * that you've defined yourself.
+   * Use this function to "clean up" after the component if it takes advantage
+   * of timers (setTimeout, setInterval), opens sockets or performs any
+   * operations we need to close/remove when no longer needed.
+   *
+   * DO
+   *  - remove any timers or listeners created in lifespan of the component
+   *
+   * DON'T
+   *  - call this.setState, start new listeners or timers
+   *
+   * @return {undefined}
+   */
+  componentWillUnmount = () => {
+    clearInterval(this.memoryTimer)
+  }
+
+  /**
+   * Examine this.props and this.state and return a single React element. This
+   * element can be either a representation of a native DOM component, such as
+   * <div />, or another composite component that you've defined yourself.
    *
    * @return {Component}
    */
   render = (): React.Node => {
     const { name, version, isDebugVisible } = this.props
+    const { memory } = this.state
 
     const actions = pipe(
       Object.entries,
@@ -54,10 +79,18 @@ class UIMenu extends React.PureComponent<PropsType> {
         top="100%-1"
         right="0"
         width="50%"
-        content={`{right}${name} v${version}{/right}`}
+        content={`{right}${name} v${version} | ${`${Math.round(
+          memory / 1048576
+        )}MB`}{/right}`}
       />,
     ]
   }
+
+  memoryTimer = setInterval(() => {
+    this.setState({
+      memory: process.memoryUsage().rss,
+    })
+  }, 1000)
 }
 
 export { UIMenu }
