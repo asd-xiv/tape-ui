@@ -8,7 +8,11 @@ import { UIList } from "../ui/list/list"
 import { UIDebug } from "../ui/debug/debug"
 import { UIMenu } from "../ui/menu/menu"
 
-import type { TestFilesType } from "./store"
+import type {
+  TestFilesType,
+  AppStateType,
+  AppActionsType,
+} from "./app.container"
 import type { UIListItemType } from "../ui/list/list"
 
 type PropsType = {
@@ -16,19 +20,11 @@ type PropsType = {
   version: string,
   projectName: string,
   projectVersion: string,
-  store: {
-    files: TestFilesType[],
-    filesSelectedPath: string,
-    runArgs: string[],
-    isDebugVisible: boolean,
-  },
-  actions: {
-    xHandleTestFileRun: (path: string) => void,
-    xHandleDebugToggle: () => void,
-  },
+  store: AppStateType,
+  actions: AppActionsType,
 }
 
-class App extends React.Component<PropsType> {
+class AppView extends React.Component<PropsType> {
   /**
    * This function will be called only once in the whole life-cycle of a given
    * component and it being called signalizes that the component and all its
@@ -130,4 +126,4 @@ class App extends React.Component<PropsType> {
   refApp = {}
 }
 
-export { App }
+export { AppView }

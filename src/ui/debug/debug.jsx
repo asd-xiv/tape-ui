@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { map, pipe, join } from "@asd14/m"
+import { deepEqual, map, pipe, join } from "@asd14/m"
 
 import { baseStyle } from "./debug.style"
 
@@ -14,7 +14,7 @@ type PropsType = {|
   height?: number | string,
 |}
 
-class UIDebug extends React.PureComponent<PropsType> {
+class UIDebug extends React.Component<PropsType> {
   static defaultProps = {
     value: {},
     top: "center",
@@ -22,6 +22,27 @@ class UIDebug extends React.PureComponent<PropsType> {
     width: "50%",
     height: "50%",
   }
+
+  /**
+   * This function will be called internally with next values of props, state
+   * and object. Developer can use those to verify that the change requires a
+   * re-render or not and return false to prevent the re-rendering from
+   * happening. In other case, you are expected to return true.
+   *
+   * DO
+   *  - use for increasing performance of poor performing Components
+   *
+   * DON’T
+   *  - cause any side effects (AJAX calls etc.)
+   *  - call this.setState
+   *
+   * @param  {Object}  nextProps  Next props
+   * @param  {Object}  nextState  Next state
+   *
+   * @return {boolean}
+   */
+  shouldComponentUpdate = (nextProps: PropsType): boolean =>
+    !deepEqual(this.props, nextProps)
 
   /**
    * When called, it should examine this.props and this.state and return a

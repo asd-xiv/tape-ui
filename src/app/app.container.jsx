@@ -3,34 +3,43 @@
 import * as React from "react"
 import glob from "glob"
 import { basename } from "path"
-import { reduce, map, head, get, pipe } from "@asd14/m"
+import { reduce, map } from "@asd14/m"
 
 import { handleTestFileRun, handleDebugToggle } from "./actions"
+import { AppView } from "./app.view"
 
 type TestFilesType = {|
   path: string,
   name: string,
   content: string[],
-  code?: number,
-  signal?: string,
+  code: number,
+  signal: string,
   isLoading: boolean,
 |}
 
 type PropsType = {|
+  name: string,
+  version: string,
+  projectName: string,
+  projectVersion: string,
   requireModules: string[],
-  pattern: string,
-  root: string,
-  children: React.Node,
+  filePattern: string,
+  rootPath: string,
 |}
 
-type StoreStateType = {
+type StateType = {
   files?: TestFilesType[],
   filesSelectedPath?: string,
   runArgs?: string[],
   isDebugVisible?: boolean,
 }
 
-class Store extends React.Component<PropsType, StoreStateType> {
+type ActionsType = {
+  xHandleTestFileRun: (path: string) => void,
+  xHandleDebugToggle: () => void,
+}
+
+class AppContainer extends React.Component<PropsType, StateType> {
   /**
    * The constructor for a React component is called before it is mounted.
    * When implementing the constructor for a React.Component subclass, you
@@ -50,29 +59,25 @@ class Store extends React.Component<PropsType, StoreStateType> {
   constructor(props: PropsType) {
     super(props)
 
-    const { requireModules, pattern, root } = props
-    const files = map(
-      (item): TestFilesType => ({
-        path: item,
-        name: basename(item),
-        content: [],
-        code: undefined,
-        signal: undefined,
-        isLoading: false,
-      })
-    )(
-      glob.sync(`**/${pattern}`, {
-        absolute: true,
-        cwd: root,
-      })
-    )
+    const { requireModules, filePattern, rootPath } = props
 
     this.state = {
-      files,
-      filesSelectedPath: pipe(
-        head,
-        get("path")
-      )(files),
+      files: map(
+        (item): TestFilesType => ({
+          path: item,
+          name: basename(item),
+          content: [],
+          code: -1,
+          signal: "",
+          isLoading: false,
+        })
+      )(
+        glob.sync(`**/${filePattern}`, {
+          absolute: true,
+          cwd: rootPath,
+        })
+      ),
+      filesSelectedPath: undefined,
       runArgs: reduce((acc, item): string[] => [...acc, "-r", item], [])(
         requireModules
       ),
@@ -95,31 +100,38 @@ class Store extends React.Component<PropsType, StoreStateType> {
    * @return {Component}
    */
   render = (): React.Node => {
-    const { children } = this.props
+    const { name, version, projectName, projectVersion } = this.props
     const { files, filesSelectedPath, runArgs, isDebugVisible } = this.state
 
-    return React.Children.map(
-      children,
-      (child): React.Node =>
-        React.cloneElement(child, {
-          store: {
-            files,
-            filesSelectedPath,
-            runArgs,
-            isDebugVisible,
-          },
-          actions: {
-            xHandleTestFileRun: this.xHandleTestFileRun,
-            xHandleDebugToggle: this.xHandleDebugToggle,
-          },
-        })
+    return (
+      <AppView
+        name={name}
+        version={version}
+        projectName={projectName}
+        projectVersion={projectVersion}
+        store={{
+          files,
+          filesSelectedPath,
+          runArgs,
+          isDebugVisible,
+        }}
+        actions={{
+          xHandleTestFileRun: this.xHandleTestFileRun,
+          xHandleDebugToggle: this.xHandleDebugToggle,
+        }}
+      />
     )
   }
 
-  xHandleDebugToggle = undefined
+  // Need for Flow. Will get properly set in constructor function
+  xHandleDebugToggle = () => {}
 
-  xHandleTestFileRun = undefined
+  xHandleTestFileRun = () => {}
 }
 
-export { Store }
-export type { StoreStateType, TestFilesType }
+export { AppContainer }
+export type {
+  StateType as AppStateType,
+  ActionsType as AppActionsType,
+  TestFilesType,
+}

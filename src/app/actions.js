@@ -4,7 +4,7 @@ import { spawn } from "child_process"
 import { replaceBy } from "@asd14/m"
 
 import type { ChildProcess } from "child_process"
-import type { StoreStateType, TestFilesType } from "./store"
+import type { AppStateType, TestFilesType } from "./app.container"
 
 /**
  * Run one file
@@ -15,7 +15,7 @@ import type { StoreStateType, TestFilesType } from "./store"
  * @return {undefined}
  */
 export const handleTestFileRun = (
-  { runArgs = [] }: StoreStateType,
+  { runArgs = [] }: AppStateType,
   setState: Function
 ): Function => (path: string): ChildProcess => {
   const tapeProcess = spawn("tape", [path, ...runArgs], {
@@ -26,7 +26,7 @@ export const handleTestFileRun = (
   })
 
   setState(
-    (prevState): StoreStateType => ({
+    (prevState): AppStateType => ({
       filesSelectedPath: path,
       files: replaceBy(
         { path },
@@ -41,7 +41,7 @@ export const handleTestFileRun = (
     () => {
       tapeProcess.stdout.on("data", data => {
         setState(
-          (prevState): StoreStateType => ({
+          (prevState): AppStateType => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -55,7 +55,7 @@ export const handleTestFileRun = (
 
       tapeProcess.stderr.on("data", data => {
         setState(
-          (prevState): StoreStateType => ({
+          (prevState): AppStateType => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -69,7 +69,7 @@ export const handleTestFileRun = (
 
       tapeProcess.on("exit", (code, signal) => {
         setState(
-          (prevState): StoreStateType => ({
+          (prevState): AppStateType => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -97,8 +97,34 @@ export const handleTestFileRun = (
  */
 export const handleDebugToggle = (setState: Function): Function => () => {
   setState(
-    (prevState): StoreStateType => ({
+    (prevState): AppStateType => ({
       isDebugVisible: !prevState.isDebugVisible,
     })
   )
+}
+
+/**
+ * Show List query input
+ *
+ * @param {Function}  setState  Store component setState
+ *
+ * @return {undefined}
+ */
+export const handleListQueryOpen = (setState: Function): Function => () => {
+  setState({
+    isListQueryVisible: true,
+  })
+}
+
+/**
+ * Close List query input
+ *
+ * @param {Function}  setState  Store component setState
+ *
+ * @return {undefined}
+ */
+export const handleListQueryClose = (setState: Function): Function => () => {
+  setState({
+    isListQueryVisible: false,
+  })
 }
