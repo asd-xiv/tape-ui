@@ -46,7 +46,7 @@ class UIMenu extends React.PureComponent<PropsType, StateType> {
    * element can be either a representation of a native DOM component, such as
    * <div />, or another composite component that you've defined yourself.
    *
-   * @return {Component}
+   * @return {React.Node}
    */
   render = (): React.Node => {
     const { name, version, isDebugVisible } = this.props

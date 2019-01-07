@@ -92,12 +92,11 @@ class AppContainer extends React.Component<PropsType, StateType> {
   }
 
   /**
-   * When called, it should examine this.props and this.state and return a
-   * single React element. This element can be either a representation of a
-   * native DOM component, such as <div />, or another composite component
-   * that you've defined yourself.
+   * Examine this.props and this.state and return a single React element. This
+   * element can be either a representation of a native DOM component, such as
+   * <div />, or another composite component that you've defined yourself.
    *
-   * @return {Component}
+   * @return {React.Node}
    */
   render = (): React.Node => {
     const { name, version, projectName, projectVersion } = this.props

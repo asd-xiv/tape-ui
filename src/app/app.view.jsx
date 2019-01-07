@@ -51,6 +51,13 @@ class AppView extends React.Component<PropsType> {
     })
   }
 
+  /**
+   * Examine this.props and this.state and return a single React element. This
+   * element can be either a representation of a native DOM component, such as
+   * <div />, or another composite component that you've defined yourself.
+   *
+   * @return {React.Node}
+   */
   render = (): React.Node => {
     const {
       name,
