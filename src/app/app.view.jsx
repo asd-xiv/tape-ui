@@ -38,11 +38,15 @@ class AppView extends React.Component<PropsType> {
    */
   componentDidMount = () => {
     const {
-      actions: { xHandleDebugToggle },
+      actions: { xHandleDebugToggle, xHandleFilterToggle },
     } = this.props
 
     this.refApp.screen.key(["i"], () => {
       xHandleDebugToggle()
+    })
+
+    this.refApp.screen.key(["/"], () => {
+      xHandleFilterToggle()
     })
 
     this.refApp.screen.key(["C-c"], () => {

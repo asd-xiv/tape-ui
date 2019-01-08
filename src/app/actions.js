@@ -104,16 +104,18 @@ export const handleDebugToggle = (setState: Function): Function => () => {
 }
 
 /**
- * Show List query input
+ * Toggle Debug window display
  *
  * @param {Function}  setState  Store component setState
  *
  * @return {undefined}
  */
-export const handleListQueryOpen = (setState: Function): Function => () => {
-  setState({
-    isListQueryVisible: true,
-  })
+export const handleFilterToggle = (setState: Function): Function => () => {
+  setState(
+    (prevState): AppStateType => ({
+      isFilterVisible: !prevState.isFilterVisible,
+    })
+  )
 }
 
 /**
@@ -123,8 +125,8 @@ export const handleListQueryOpen = (setState: Function): Function => () => {
  *
  * @return {undefined}
  */
-export const handleListQueryClose = (setState: Function): Function => () => {
+export const handleFilterClose = (setState: Function): Function => () => {
   setState({
-    isListQueryVisible: false,
+    isFilterVisible: false,
   })
 }

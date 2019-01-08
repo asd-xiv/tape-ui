@@ -8,10 +8,20 @@ import { AppContainer } from "./app/app.container"
 const pkg = require(`../package.json`)
 const projectPkg = require(`${process.cwd()}/package.json`)
 
-//
+const screen = neoBlessed.screen({
+  title: `${pkg.name} v${pkg.version}`,
+  tabSize: 2,
+  autoPadding: true,
+  smartCSR: true,
+  dockBorders: true,
+  fullUnicode: true,
+  ignoreLocked: ["C-c"],
+})
+
 export default ({ requireModules, rootPath, filePattern }) => {
   createBlessedRenderer(neoBlessed)(
     <AppContainer
+      screen={screen}
       name={pkg.name}
       version={pkg.version}
       projectName={projectPkg.name}
@@ -20,13 +30,6 @@ export default ({ requireModules, rootPath, filePattern }) => {
       filePattern={filePattern}
       rootPath={resolve(join(process.cwd(), rootPath))}
     />,
-    neoBlessed.screen({
-      title: `Tape UI v${pkg.version}`,
-      tabSize: 2,
-      autoPadding: true,
-      smartCSR: true,
-      dockBorders: true,
-      fullUnicode: true,
-    })
+    screen
   )
 }
