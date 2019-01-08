@@ -27,5 +27,6 @@ export const isHoveredStyle = {
   style: {
     fg: "black",
     bg: "white",
+    bold: true,
   },
 }

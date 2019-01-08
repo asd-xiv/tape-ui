@@ -26,7 +26,7 @@ export const handleTestFileRun = (
   })
 
   setState(
-    (prevState): AppStateType => ({
+    (prevState): $Shape<AppStateType> => ({
       filesSelectedPath: path,
       files: replaceBy(
         { path },
@@ -41,7 +41,7 @@ export const handleTestFileRun = (
     () => {
       tapeProcess.stdout.on("data", data => {
         setState(
-          (prevState): AppStateType => ({
+          (prevState): $Shape<AppStateType> => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -55,7 +55,7 @@ export const handleTestFileRun = (
 
       tapeProcess.stderr.on("data", data => {
         setState(
-          (prevState): AppStateType => ({
+          (prevState): $Shape<AppStateType> => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -69,7 +69,7 @@ export const handleTestFileRun = (
 
       tapeProcess.on("exit", (code, signal) => {
         setState(
-          (prevState): AppStateType => ({
+          (prevState): $Shape<AppStateType> => ({
             files: replaceBy(
               { path },
               (item: TestFilesType): TestFilesType => ({
@@ -97,29 +97,43 @@ export const handleTestFileRun = (
  */
 export const handleDebugToggle = (setState: Function): Function => () => {
   setState(
-    (prevState): AppStateType => ({
+    (prevState): $Shape<AppStateType> => ({
       isDebugVisible: !prevState.isDebugVisible,
     })
   )
 }
 
 /**
- * Toggle Debug window display
+ * Open List filter input
  *
  * @param {Function}  setState  Store component setState
  *
  * @return {undefined}
  */
-export const handleFilterToggle = (setState: Function): Function => () => {
-  setState(
-    (prevState): AppStateType => ({
-      isFilterVisible: !prevState.isFilterVisible,
-    })
-  )
+export const handleFilterOpen = (setState: Function): Function => () => {
+  setState({
+    isFilterVisible: true,
+  })
 }
 
 /**
- * Close List query input
+ * Submit List filter input
+ *
+ * @param {Function}  setState  Store component setState
+ *
+ * @return {undefined}
+ */
+export const handleFilterSubmit = (setState: Function): Function => (
+  value: string
+) => {
+  setState({
+    filesFilter: value,
+    isFilterVisible: false,
+  })
+}
+
+/**
+ * Close List filter input
  *
  * @param {Function}  setState  Store component setState
  *
@@ -127,6 +141,21 @@ export const handleFilterToggle = (setState: Function): Function => () => {
  */
 export const handleFilterClose = (setState: Function): Function => () => {
   setState({
+    filesFilter: "",
     isFilterVisible: false,
+  })
+}
+/**
+ * Change List filter value
+ *
+ * @param {Function}  setState  Store component setState
+ *
+ * @return {undefined}
+ */
+export const handleFilterChange = (setState: Function): Function => (
+  value: string
+) => {
+  setState({
+    filesFilter: value,
   })
 }

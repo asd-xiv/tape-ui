@@ -1,10 +1,11 @@
 // @flow
 
 import * as React from "react"
-import { min, max, map, findIndexBy, isEmpty } from "@asd14/m"
+import { min, max, map, filter, replace, findIndexBy, isEmpty } from "@asd14/m"
 
 import { UIListItem } from "./list__item"
-import { baseStyle } from "./list.style"
+
+import { baseStyle, donnoStyle } from "./list.style"
 
 type UIListItemType = {|
   id: string,
@@ -16,12 +17,13 @@ type UIListItemType = {|
 type PropsType = {|
   selectedId: string,
   label: string,
-  top?: number | string,
-  left?: number | string,
-  width?: number | string,
-  height?: number | string,
+  filter: string,
+  top: number | string,
+  left: number | string,
+  width: number | string,
+  height: number | string,
   items: UIListItemType[],
-  onSelect: Function,
+  onSelect: (id: string) => void,
 |}
 
 type StateType = {
@@ -31,6 +33,7 @@ type StateType = {
 class UIList extends React.Component<PropsType, StateType> {
   static defaultProps = {
     selectedId: "",
+    filter: "",
     label: "",
     top: "center",
     left: "center",
@@ -57,6 +60,7 @@ class UIList extends React.Component<PropsType, StateType> {
     const pageSize = this.refList.height - 2
 
     this.refList.scrollTo(0)
+
     this.refList.on("keypress", this.handleMoveKeys)
 
     // hook into children mouse wheel events
@@ -105,29 +109,48 @@ class UIList extends React.Component<PropsType, StateType> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const { selectedId, label, top, left, width, height, items } = this.props
+    const {
+      selectedId,
+      label,
+      filter: query,
+      top,
+      left,
+      width,
+      height,
+      items: allItems,
+    } = this.props
     const { hoverPosition } = this.state
+
+    const items = isEmpty(query)
+      ? allItems
+      : filter(
+          (item: UIListItemType): boolean => item.id.indexOf(query) !== -1
+        )(allItems)
+    const filesCountLabel = isEmpty(query)
+      ? `${allItems.length} files`
+      : `${items.length} of ${allItems.length} files - ${JSON.stringify(query)}`
 
     return (
       <box
         ref={this.linkRefList}
         class={baseStyle}
         label={
-          isEmpty(label)
-            ? ` ${items.length} files `
-            : ` ${label} | ${items.length} files `
+          isEmpty(label) ? filesCountLabel : ` ${label} | ${filesCountLabel} `
         }
         top={top}
         left={left}
         width={width}
         height={height}>
+        {isEmpty(items) && !isEmpty(query) ? (
+          <box content="¯\_(ツ)_/¯" class={donnoStyle} />
+        ) : null}
         {map(
           (item: UIListItemType, index: number): React.Node => (
             <UIListItem
               key={item.id}
               id={item.id}
               code={item.code}
-              label={item.label}
+              label={replace(query, `{bold}${query}{/bold}`)(item.label)}
               top={index}
               isSelected={selectedId === item.id}
               isHovered={hoverPosition === index}
@@ -173,7 +196,7 @@ class UIList extends React.Component<PropsType, StateType> {
       case "k":
       case "up":
         this.setState(
-          (prevState): StateType => ({
+          (prevState): $Shape<StateType> => ({
             hoverPosition: max([0, prevState.hoverPosition - 1]),
           })
         )
@@ -181,21 +204,21 @@ class UIList extends React.Component<PropsType, StateType> {
       case "j":
       case "down":
         this.setState(
-          (prevState): StateType => ({
+          (prevState): $Shape<StateType> => ({
             hoverPosition: min([items.length - 1, prevState.hoverPosition + 1]),
           })
         )
         break
       case "pageup":
         this.setState(
-          (prevState): StateType => ({
+          (prevState): $Shape<StateType> => ({
             hoverPosition: max([0, prevState.hoverPosition - pageSize]),
           })
         )
         break
       case "pagedown":
         this.setState(
-          (prevState): StateType => ({
+          (prevState): $Shape<StateType> => ({
             hoverPosition: min([
               items.length - 1,
               prevState.hoverPosition + pageSize,

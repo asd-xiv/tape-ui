@@ -18,6 +18,18 @@ export const baseStyle = {
     bold: true,
   },
   style: {
+    fg: "white",
     bg: "transparent",
+  },
+}
+
+export const donnoStyle = {
+  bold: true,
+  height: 3,
+  shrink: true,
+  left: "center",
+  top: "center",
+  style: {
+    fg: "yellow",
   },
 }
