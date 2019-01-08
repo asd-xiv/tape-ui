@@ -4,6 +4,7 @@ import * as React from "react"
 import { min, max, map, filter, replace, findIndexBy, isEmpty } from "@asd14/m"
 
 import { UIListItem } from "./list__item"
+import { UILabel } from "../label/label"
 
 import { baseStyle, donnoStyle } from "./list.style"
 
@@ -23,6 +24,7 @@ type PropsType = {|
   width: number | string,
   height: number | string,
   items: UIListItemType[],
+  isLoading: boolean,
   onSelect: (id: string) => void,
 |}
 
@@ -33,12 +35,13 @@ type StateType = {
 class UIList extends React.Component<PropsType, StateType> {
   static defaultProps = {
     selectedId: "",
-    filter: "",
     label: "",
+    filter: "",
     top: "center",
     left: "center",
     width: "50%",
     height: "50%",
+    isLoading: false,
   }
 
   state = {
@@ -118,6 +121,7 @@ class UIList extends React.Component<PropsType, StateType> {
       width,
       height,
       items: allItems,
+      isLoading,
     } = this.props
     const { hoverPosition } = this.state
 
@@ -126,17 +130,13 @@ class UIList extends React.Component<PropsType, StateType> {
       : filter(
           (item: UIListItemType): boolean => item.id.indexOf(query) !== -1
         )(allItems)
-    const filesCountLabel = isEmpty(query)
-      ? `${allItems.length} files`
-      : `${items.length} of ${allItems.length} files - ${JSON.stringify(query)}`
+    const filesCountLabel = `${allItems.length} files`
 
-    return (
+    return [
       <box
+        key="files-list-items"
         ref={this.linkRefList}
         class={baseStyle}
-        label={
-          isEmpty(label) ? filesCountLabel : ` ${label} | ${filesCountLabel} `
-        }
         top={top}
         left={left}
         width={width}
@@ -160,8 +160,17 @@ class UIList extends React.Component<PropsType, StateType> {
             />
           )
         )(items)}
-      </box>
-    )
+      </box>,
+      <UILabel
+        key="files-list-label"
+        top={top}
+        left={isLoading ? left : `${left}+2`}
+        text={
+          isEmpty(label) ? filesCountLabel : `${label} - ${filesCountLabel}`
+        }
+        isLoading={isLoading}
+      />,
+    ]
   }
 
   /**
