@@ -8,7 +8,8 @@ import { baseStyle } from "./menu.style"
 type PropsType = {|
   name: string,
   version: string,
-  isDebugVisible?: boolean,
+  isDebugVisible: boolean,
+  isFilterVisible: boolean,
 |}
 
 type StateType = {
@@ -18,6 +19,7 @@ type StateType = {
 class UIMenu extends React.PureComponent<PropsType, StateType> {
   static defaultProps = {
     isDebugVisible: false,
+    isFilterVisible: false,
   }
 
   state = {
@@ -49,20 +51,32 @@ class UIMenu extends React.PureComponent<PropsType, StateType> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const { name, version, isDebugVisible } = this.props
+    const { name, version, isDebugVisible, isFilterVisible } = this.props
     const { memory } = this.state
 
-    const actions = pipe(
-      Object.entries,
-      reduce(
-        (acc = "", [key, value]): string =>
-          `${acc}{white-bg}{black-fg}${key}{/} ${value} `
-      )
-    )({
-      i: isDebugVisible ? "Hide details" : "Show details",
-      "Space|Enter": "Run",
-      "C-c": "Exit",
-    })
+    const actions = {
+      filter: isFilterVisible
+        ? {
+            Esc: "Cancel",
+            Enter: "Keep",
+          }
+        : {
+            "/": "Filter",
+          },
+      list: isFilterVisible
+        ? {}
+        : {
+            Enter: "Run",
+          },
+      file: isFilterVisible
+        ? {}
+        : {
+            i: isDebugVisible ? "Hide details" : "Show details",
+          },
+      global: {
+        "C-c": "Exit",
+      },
+    }
 
     return [
       <box
@@ -71,7 +85,15 @@ class UIMenu extends React.PureComponent<PropsType, StateType> {
         top="100%-1"
         left="0"
         width="50%"
-        content={actions}
+        content={pipe(
+          Object.entries,
+          reduce((acc = {}, [, value]): Object => ({ ...acc, ...value })),
+          Object.entries,
+          reduce(
+            (acc = "", [key, value]): string =>
+              `${acc}{white-bg}{black-fg}${key}{/} ${value} `
+          )
+        )(actions)}
       />,
       <box
         key="title"
