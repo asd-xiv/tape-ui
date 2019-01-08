@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { map, findBy } from "@asd14/m"
+import { map, findBy, hasWith } from "@asd14/m"
 
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
@@ -74,6 +74,7 @@ class AppView extends React.Component<PropsType> {
             isLoading: item.isLoading,
           })
         )(Object.values(files))}
+        isLoading={hasWith({ isLoading: true })(files)}
         onSelect={xHandleFileRun}
       />,
       isFilterVisible ? (
@@ -100,6 +101,7 @@ class AppView extends React.Component<PropsType> {
         content={filesSelected.content}
         code={filesSelected.code}
         signal={filesSelected.signal}
+        isLoading={filesSelected.isLoading}
       />,
       isDebugVisible ? (
         <UIDebug
