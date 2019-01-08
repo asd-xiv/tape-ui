@@ -18,40 +18,12 @@ type PropsType = {|
   isLoading: boolean,
 |}
 
-class UIFile extends React.Component<PropsType, {}> {
+class UIFile extends React.Component<PropsType> {
   static defaultProps = {
     content: [],
     code: NaN,
     signal: "-",
     isLoading: false,
-  }
-
-  /**
-   * Due to the fact that this is the only function that is guaranteed to be
-   * called only once in each re-render cycle it is recommended to use this
-   * function for any side-effect causing operations. Similarly to
-   * componentWillUpdate and componentWillReceiveProps this function is called
-   * with object-maps of previous props, state and context, even if no actual
-   * change happened to those values.
-   *
-   * DO
-   *  - cause side effects (AJAX calls etc.)
-   *
-   * DON'T
-   *  - call this.setState as it will result in a re-render
-   *
-   * @param  {Object}   prevProps    Previous props
-   * @param  {Object}   prevState    Previous state
-   * @param  {Object}   prevContext  Previous context
-   *
-   * @return {undefined}
-   */
-  componentDidUpdate = (prevProps: PropsType) => {
-    const { content } = this.props
-
-    if (this.refBox && prevProps.content.length !== content.length) {
-      this.refBox.setScrollPerc(100)
-    }
   }
 
   /**
@@ -65,7 +37,7 @@ class UIFile extends React.Component<PropsType, {}> {
     const { label, top, left, width, height, content } = this.props
 
     return (
-      <box
+      <log
         ref={this.linkRefBox}
         class={baseStyle}
         label={`[ ${isEmpty(label) ? "no file selected" : label} ]`}
@@ -73,6 +45,7 @@ class UIFile extends React.Component<PropsType, {}> {
         left={left}
         width={width}
         height={height}
+        scrollOnInput={true}
         content={content.join("\n")}
       />
     )
