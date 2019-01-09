@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.5.0] - 9 January 2019
+
+### Add
+
+- [`UIInput`](src/ui/input/input.jsx) component. Wrapper over blessed textbox
+- [`UILabel`](src/ui/label/label.jsx) component with spinner support
+- `/` shortcut for filtering files
+- Output memory usage
+
 ## [0.4.0] - 6 January 2019
 
 ### Add
@@ -39,8 +48,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 First
 
-[Unreleased]: https://github.com/asd14/tape-ui/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/asd14/tape-ui/compare/v0.5.0...HEAD
 
+[0.5.0]: https://github.com/asd14/tape-ui/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/asd14/tape-ui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/asd14/tape-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/asd14/tape-ui/compare/v0.1.0...v0.2.0

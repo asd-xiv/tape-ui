@@ -5,9 +5,6 @@
 ![Tape UI](docs/screenshot.png)
 
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
-> - Parallel testing
-> - Keyboard navigation with Vim shortcuts
-> - Babel support
 
 ---
 
@@ -17,7 +14,7 @@
 - [Develop](#develop)
 - [Use](#use)
 - [Changelog](#changelog)
-    - [0.4.0 - 6 January 2019](#040---6-january-2019)
+    - [0.5.0 - 9 January 2019](#050---9-january-2019)
 
 <!-- /MarkdownTOC -->
 
@@ -57,8 +54,11 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.4.0 - 6 January 2019
+### 0.5.0 - 9 January 2019
 
 #### Add
 
-- Keyboad navigation in main list: up, down, home, end, page-up, page-down and space for "Run file"
+- [`UIInput`](src/ui/input/input.jsx) component. Wrapper over blessed textbox
+- [`UILabel`](src/ui/label/label.jsx) component with spinner support
+- `/` shortcut for filtering files
+- Output memory usage
