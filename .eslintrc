@@ -16,6 +16,7 @@
     "react/require-default-props": "off",
     "react/default-props-match-prop-types": "off",
     "flowtype/no-unused-expressions": "off",
+    "flowtype/require-return-type": "off",
   },
   "settings": {
     "react": {
