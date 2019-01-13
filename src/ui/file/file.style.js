@@ -1,3 +1,5 @@
+// @flow
+
 export const baseStyle = {
   keys: true,
   vi: true,

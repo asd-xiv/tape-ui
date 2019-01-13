@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { min, max, map, filter, replace, findIndexBy, isEmpty } from "@asd14/m"
+import { min, max, map, findIndexBy, isEmpty } from "@asd14/m"
 
 import { UIListItem } from "./list__item"
 import { UILabel } from "../label/label"
@@ -18,7 +18,6 @@ type UIListItemType = {|
 type PropsType = {|
   selectedId: string,
   label: string,
-  filter: string,
   top: number | string,
   left: number | string,
   width: number | string,
@@ -36,7 +35,6 @@ class UIList extends React.Component<PropsType, StateType> {
   static defaultProps = {
     selectedId: "",
     label: "",
-    filter: "",
     top: "center",
     left: "center",
     width: "50%",
@@ -115,22 +113,14 @@ class UIList extends React.Component<PropsType, StateType> {
     const {
       selectedId,
       label,
-      filter: query,
       top,
       left,
       width,
       height,
-      items: allItems,
+      items,
       isLoading,
     } = this.props
     const { hoverPosition } = this.state
-
-    const items = isEmpty(query)
-      ? allItems
-      : filter(
-          (item: UIListItemType): boolean => item.id.indexOf(query) !== -1
-        )(allItems)
-    const filesCountLabel = `${allItems.length} files`
 
     return [
       <box
@@ -141,7 +131,7 @@ class UIList extends React.Component<PropsType, StateType> {
         left={left}
         width={width}
         height={height}>
-        {isEmpty(items) && !isEmpty(query) ? (
+        {isEmpty(items) ? (
           <box content="¯\_(ツ)_/¯" class={donnoStyle} />
         ) : null}
         {map(
@@ -150,7 +140,7 @@ class UIList extends React.Component<PropsType, StateType> {
               key={item.id}
               id={item.id}
               code={item.code}
-              label={replace(query, `{bold}${query}{/bold}`)(item.label)}
+              label={item.label}
               top={index}
               isSelected={selectedId === item.id}
               isHovered={hoverPosition === index}
@@ -165,9 +155,7 @@ class UIList extends React.Component<PropsType, StateType> {
         key="files-list-label"
         top={top}
         left={isLoading ? left : `${left}+2`}
-        text={
-          isEmpty(label) ? filesCountLabel : `${label} - ${filesCountLabel}`
-        }
+        text={label}
         isLoading={isLoading}
       />,
     ]

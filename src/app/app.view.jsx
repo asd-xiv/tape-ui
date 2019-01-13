@@ -1,7 +1,16 @@
 // @flow
 
 import * as React from "react"
-import { map, findBy, hasWith } from "@asd14/m"
+import {
+  pipe,
+  filter,
+  map,
+  findBy,
+  replace,
+  hasWith,
+  isEmpty,
+  count,
+} from "@asd14/m"
 
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
@@ -19,7 +28,6 @@ import type { UIListItemType } from "../ui/list/list"
 type PropsType = {
   name: string,
   version: string,
-  projectName: string,
   projectVersion: string,
   store: AppStateType,
   actions: AppActionsType,
@@ -37,7 +45,6 @@ class AppView extends React.Component<PropsType> {
     const {
       name,
       version,
-      projectName,
       store: {
         filesSelectedPath,
         files,
@@ -55,25 +62,39 @@ class AppView extends React.Component<PropsType> {
     } = this.props
     const filesSelected: TestFilesType =
       findBy({ path: filesSelectedPath })(files) ?? {}
+    const filesFilteredCount = isEmpty(filesFilter)
+      ? files.length
+      : count(item => item.path.indexOf(filesFilter) !== -1)(files)
 
     return [
       <UIList
         key="app-files-list"
         selectedId={filesSelected.path}
-        label={projectName}
-        filter={filesFilter}
+        label={
+          isEmpty(filesFilter)
+            ? `${files.length} files`
+            : `${filesFilteredCount}/${files.length} files`
+        }
         top="0"
         left="0"
         width="30%+1"
         height={isFilterVisible ? "100%-3" : "100%-1"}
-        items={map(
-          (item: TestFilesType): UIListItemType => ({
-            id: item.path,
-            label: item.name,
-            code: item.code,
-            isLoading: item.isLoading,
-          })
-        )(Object.values(files))}
+        items={pipe(
+          filter(
+            (item: TestFilesType): boolean =>
+              item.path.indexOf(filesFilter) !== -1
+          ),
+          map(
+            (item: TestFilesType): UIListItemType => ({
+              id: item.path,
+              label: replace(filesFilter, `{bold}${filesFilter}{/bold}`)(
+                item.name
+              ),
+              code: item.code,
+              isLoading: item.isLoading,
+            })
+          )
+        )(files)}
         isLoading={hasWith({ isLoading: true })(files)}
         onSelect={xHandleFileRun}
       />,
@@ -97,7 +118,7 @@ class AppView extends React.Component<PropsType> {
         top="0"
         left="30%"
         width="70%"
-        height={isDebugVisible ? "70%" : "100%-1"}
+        height={isDebugVisible ? "70%+1" : "100%-1"}
         content={filesSelected.content}
         code={filesSelected.code}
         signal={filesSelected.signal}
@@ -113,7 +134,7 @@ class AppView extends React.Component<PropsType> {
             Args: runArgs,
             "Exit code": filesSelected.code,
           }}
-          top="70%-1"
+          top="70%"
           left="30%"
           width="70%"
           height="30%"

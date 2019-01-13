@@ -1,3 +1,5 @@
+// @flow
+
 export const baseStyle = {
   tags: true,
   shrink: true,
