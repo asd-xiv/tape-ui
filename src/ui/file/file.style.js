@@ -1,10 +1,9 @@
 // @flow
 
-export const baseStyle = {
+export const file = {
   keys: true,
   vi: true,
   tags: true,
-  mouse: true,
   scrollable: true,
   padding: {
     top: 0,
@@ -18,14 +17,15 @@ export const baseStyle = {
   },
   border: {
     type: "line",
-    fg: "white",
   },
   style: {
-    bold: false,
-    underline: false,
-    blink: false,
-    inverse: false,
-    invisible: false,
-    transparent: false,
+    border: {
+      fg: -1,
+    },
+    focus: {
+      border: {
+        fg: "white",
+      },
+    },
   },
 }

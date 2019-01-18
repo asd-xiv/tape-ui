@@ -3,11 +3,9 @@
 import * as React from "react"
 import { isEmpty } from "@asd14/m"
 
-import { UILabel } from "../label/label"
+import * as style from "./file.style"
 
-import { baseStyle } from "./file.style"
-
-type PropsType = {|
+type Props = {|
   label: string,
   path: string,
   top: number | string,
@@ -20,7 +18,7 @@ type PropsType = {|
   isLoading: boolean,
 |}
 
-class UIFile extends React.Component<PropsType> {
+class UIFile extends React.Component<Props> {
   static defaultProps = {
     content: [],
     code: NaN,
@@ -38,29 +36,24 @@ class UIFile extends React.Component<PropsType> {
   render = (): React.Node => {
     const { label, top, left, width, height, content } = this.props
 
-    return [
+    return (
       <log
         key="file-log"
         ref={this.linkRefBox}
-        class={baseStyle}
+        label={`${isEmpty(label) ? "no file selected" : label}`}
+        class={style.file}
         top={top}
         left={left}
         width={width}
         height={height}
         scrollOnInput={true}
         content={content.join("\n")}
-      />,
-      <UILabel
-        key="file-label"
-        top={top}
-        left={`${left}+2`}
-        text={`${isEmpty(label) ? "no file selected" : label}`}
-      />,
-    ]
+      />
+    )
   }
 
   /**
-   * Links a reference box.
+   * Link to blessed Log object
    *
    * @param  {Object}  ref  The reference object
    *
