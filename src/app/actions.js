@@ -1,150 +1,153 @@
 // @flow
 
 import { spawn } from "child_process"
-import { replaceBy } from "@asd14/m"
+import { when, replaceBy, forEach } from "@asd14/m"
 
-import type { ChildProcess } from "child_process"
-import type { AppStateType, TestFilesType } from "./app.container"
+import type { AppState, TestFile } from "./app.container"
+
+type SetStateCallbackFn = (prevState: AppState) => $Shape<AppState>
+
+type SetStateFn = (
+  fn: SetStateCallbackFn | $Shape<AppState>,
+  callback?: Function
+) => void
 
 /**
- * Run one file
+ * Start node/tape process
  *
- * @param {Object}    state     Store component state
  * @param {Function}  setState  Store component setState
+ * @param {string}    path      File path
  *
  * @return {undefined}
  */
-export const handleTestFileRun = (
-  { runArgs = [] }: AppStateType,
-  setState: Function
-): Function => (path: string): ChildProcess => {
-  const tapeProcess = spawn("tape", [path, ...runArgs], {
-    cwd: process.cwd(),
-    env: process.env,
-    detatched: true,
-    encoding: "utf8",
-  })
+const runOne = (setState: SetStateFn) => (path: string) => {
+  setState(state => {
+    const tapeProcess = spawn("tape", [path, ...state.runArgs], {
+      cwd: process.cwd(),
+      env: process.env,
+      detatched: true,
+      encoding: "utf8",
+    })
 
-  setState(
-    (prevState): $Shape<AppStateType> => ({
-      filesSelectedPath: path,
+    tapeProcess.stdout.on("data", data => {
+      setState(prevState => ({
+        files: replaceBy(
+          { path },
+          (item: TestFile): TestFile => ({
+            ...item,
+            content: [...item.content, data.toString()],
+          })
+        )(prevState.files),
+      }))
+    })
+
+    tapeProcess.stderr.on("data", data => {
+      setState(prevState => ({
+        files: replaceBy(
+          { path },
+          (item: TestFile): TestFile => ({
+            ...item,
+            content: [...item.content, data.toString()],
+          })
+        )(prevState.files),
+      }))
+    })
+
+    tapeProcess.on("exit", (code, signal) => {
+      setState(prevState => ({
+        files: replaceBy(
+          { path },
+          (item: TestFile): TestFile => ({
+            ...item,
+            code,
+            signal,
+            isLoading: false,
+          })
+        )(prevState.files),
+      }))
+    })
+
+    return {
+      fileSelectedPath: path,
       files: replaceBy(
         { path },
-        (item: TestFilesType): TestFilesType => ({
+        (item: TestFile): TestFile => ({
           ...item,
-          code: undefined,
-          signal: undefined,
+          code: -1,
+          signal: "",
           isLoading: true,
         })
-      )(prevState.files),
-    }),
-    () => {
-      tapeProcess.stdout.on("data", data => {
-        setState(
-          (prevState): $Shape<AppStateType> => ({
-            files: replaceBy(
-              { path },
-              (item: TestFilesType): TestFilesType => ({
-                ...item,
-                content: [...item.content, data.toString()],
-              })
-            )(prevState.files),
-          })
-        )
-      })
-
-      tapeProcess.stderr.on("data", data => {
-        setState(
-          (prevState): $Shape<AppStateType> => ({
-            files: replaceBy(
-              { path },
-              (item: TestFilesType): TestFilesType => ({
-                ...item,
-                content: [...item.content, data.toString()],
-              })
-            )(prevState.files),
-          })
-        )
-      })
-
-      tapeProcess.on("exit", (code, signal) => {
-        setState(
-          (prevState): $Shape<AppStateType> => ({
-            files: replaceBy(
-              { path },
-              (item: TestFilesType): TestFilesType => ({
-                ...item,
-                code,
-                signal,
-                isLoading: false,
-              })
-            )(prevState.files),
-          })
-        )
-      })
+      )(state.files),
     }
-  )
-
-  return tapeProcess
+  })
 }
 
 /**
- * Toggle Debug window display
+ * Start node/tape process for one or more test files
+ *
+ * @param {Function}           setState  Store component setState
+ * @param {string|string[]}    paths     File path(s)
+ *
+ * @return {undefined}
+ */
+export const run = (setState: SetStateFn) => (paths: string | string[]) => {
+  when(Array.isArray, forEach(runOne(setState)), runOne(setState))(paths)
+}
+
+/**
+ * Change focused file
+ *
+ * @param {Function}  setState  Store component setState
+ * @param {string}    path      File path
+ *
+ * @returns {undefined}
+ */
+export const changeSelected = (setState: SetStateFn) => (path: string) => {
+  setState({
+    fileSelectedPath: path,
+  })
+}
+
+/**
+ * Toggle File Details window
  *
  * @param {Function}  setState  Store component setState
  *
  * @return {undefined}
  */
-export const handleDebugToggle = (setState: Function): Function => () => {
-  setState(
-    (prevState): $Shape<AppStateType> => ({
-      isDebugVisible: !prevState.isDebugVisible,
-    })
-  )
+export const detailsToggle = (setState: SetStateFn) => () => {
+  setState(prevState => ({
+    isDebugVisible: !prevState.isDebugVisible,
+  }))
 }
 
 /**
- * Open List filter input
+ * Show filter input
  *
  * @param {Function}  setState  Store component setState
  *
  * @return {undefined}
  */
-export const handleFilterOpen = (setState: Function): Function => () => {
+export const filterOpen = (setState: SetStateFn) => () => {
   setState({
     isFilterVisible: true,
   })
 }
 
 /**
- * Submit List filter input
+ * Hide filter input and clear filter query
  *
  * @param {Function}  setState  Store component setState
  *
  * @return {undefined}
  */
-export const handleFilterSubmit = (setState: Function): Function => (
-  value: string
-) => {
+export const filterClose = (setState: SetStateFn) => () => {
   setState({
-    filesFilter: value,
+    filterQuery: "",
     isFilterVisible: false,
   })
 }
 
-/**
- * Close List filter input
- *
- * @param {Function}  setState  Store component setState
- *
- * @return {undefined}
- */
-export const handleFilterClose = (setState: Function): Function => () => {
-  setState({
-    filesFilter: "",
-    isFilterVisible: false,
-  })
-}
 /**
  * Change List filter value
  *
@@ -152,10 +155,21 @@ export const handleFilterClose = (setState: Function): Function => () => {
  *
  * @return {undefined}
  */
-export const handleFilterChange = (setState: Function): Function => (
-  value: string
-) => {
+export const filterChange = (setState: SetStateFn) => (query: string) => {
   setState({
-    filesFilter: value,
+    filterQuery: query,
+  })
+}
+
+/**
+ * Hide filter input
+ *
+ * @param {Function}  setState  Store component setState
+ *
+ * @return {undefined}
+ */
+export const filterSubmit = (setState: SetStateFn) => () => {
+  setState({
+    isFilterVisible: false,
   })
 }
