@@ -1,37 +1,44 @@
 // @flow
 
 import * as React from "react"
-import { min, max, map, findIndexBy, isEmpty } from "@asd14/m"
+import {
+  max,
+  min,
+  map,
+  findIndexBy,
+  pipe,
+  get,
+  head,
+  tail,
+  isEmpty,
+} from "@asd14/m"
 
 import { UIListItem } from "./list__item"
+import type { ListItem } from "./list__item"
+
 import { UILabel } from "../label/label"
 
-import { baseStyle, donnoStyle } from "./list.style"
+import * as style from "./list.style"
 
-type UIListItemType = {|
-  id: string,
-  label: string,
-  code?: number,
-  isLoading: boolean,
-|}
-
-type PropsType = {|
+type Props = {|
   selectedId: string,
   label: string,
+  items: ListItem[],
   top: number | string,
   left: number | string,
   width: number | string,
   height: number | string,
-  items: UIListItemType[],
   isLoading: boolean,
-  onSelect: (id: string) => void,
+  onChange: (path: string) => void,
+  onSelect: (path: string) => void,
 |}
 
-type StateType = {
-  hoverPosition: number,
+type State = {
+  position: number,
+  hasFocus: boolean,
 }
 
-class UIList extends React.Component<PropsType, StateType> {
+class UIList extends React.Component<Props, State> {
   static defaultProps = {
     selectedId: "",
     label: "",
@@ -43,7 +50,17 @@ class UIList extends React.Component<PropsType, StateType> {
   }
 
   state = {
-    hoverPosition: 0,
+    position: 0,
+    hasFocus: false,
+  }
+
+  static getDerivedStateFromProps = (props: Props) => {
+    const { selectedId, items } = props
+    const newPosition = findIndexBy({ id: selectedId })(items)
+
+    return {
+      position: newPosition === -1 ? 0 : newPosition,
+    }
   }
 
   /**
@@ -58,20 +75,9 @@ class UIList extends React.Component<PropsType, StateType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
-    const pageSize = this.refList.height - 2
-
     this.refList.scrollTo(0)
-
+    this.refList.focus()
     this.refList.on("keypress", this.handleMoveKeys)
-
-    // hook into children mouse wheel events
-    this.refList.on("element wheeldown", (/* el, mouse */) => {
-      this.refList.scroll(pageSize)
-    })
-
-    this.refList.on("element wheelup", (/* el, mouse */) => {
-      this.refList.scroll(-pageSize)
-    })
   }
 
   /**
@@ -94,11 +100,15 @@ class UIList extends React.Component<PropsType, StateType> {
    *
    * @return {undefined}
    */
-  componentDidUpdate = (prevProps: PropsType, prevState: StateType) => {
-    const { hoverPosition } = this.state
+  componentDidUpdate = (prevProps: Props) => {
+    const { selectedId, items } = this.props
+    const { position } = this.state
 
-    if (hoverPosition !== prevState.hoverPosition) {
-      this.refList.scrollTo(hoverPosition)
+    if (
+      selectedId !== prevProps.selectedId ||
+      items.length !== prevProps.items.length
+    ) {
+      this.refList.scrollTo(position)
     }
   }
 
@@ -120,22 +130,24 @@ class UIList extends React.Component<PropsType, StateType> {
       items,
       isLoading,
     } = this.props
-    const { hoverPosition } = this.state
+    const { hasFocus } = this.state
 
     return [
       <box
         key="files-list-items"
         ref={this.linkRefList}
-        class={baseStyle}
+        class={[style.list, hasFocus && style.listHasFocus]}
         top={top}
         left={left}
         width={width}
-        height={height}>
+        height={height}
+        onBlur={this.handleBlur}
+        onFocus={this.handleFocus}>
         {isEmpty(items) ? (
-          <box content="¯\_(ツ)_/¯" class={donnoStyle} />
+          <box content="¯\_(ツ)_/¯" class={style.donnoLabel} />
         ) : null}
         {map(
-          (item: UIListItemType, index: number): React.Node => (
+          (item: ListItem, index: number): React.Node => (
             <UIListItem
               key={item.id}
               id={item.id}
@@ -143,10 +155,7 @@ class UIList extends React.Component<PropsType, StateType> {
               label={item.label}
               top={index}
               isSelected={selectedId === item.id}
-              isHovered={hoverPosition === index}
               isLoading={item.isLoading}
-              onClick={this.handleItemClick}
-              onKeypress={this.handleMoveKeys}
             />
           )
         )(items)}
@@ -154,11 +163,23 @@ class UIList extends React.Component<PropsType, StateType> {
       <UILabel
         key="files-list-label"
         top={top}
-        left={isLoading ? left : `${left}+2`}
+        left={isLoading ? `${left}+1` : `${left}+4`}
         text={label}
         isLoading={isLoading}
       />,
     ]
+  }
+
+  handleFocus = () => {
+    this.setState({
+      hasFocus: true,
+    })
+  }
+
+  handleBlur = () => {
+    this.setState({
+      hasFocus: false,
+    })
   }
 
   /**
@@ -170,82 +191,48 @@ class UIList extends React.Component<PropsType, StateType> {
    * @return {undefined}
    */
   handleMoveKeys = (code: string, key: Object) => {
-    const { items, onSelect } = this.props
-    const { hoverPosition } = this.state
+    const { items, onChange, onSelect } = this.props
+    const { position } = this.state
 
     const pageSize = this.refList.height - 2
 
     switch (key.full) {
       case "enter":
       case "space":
-        onSelect(items[hoverPosition].id)
+        onSelect(items[position].id)
         break
       case "home":
-        this.setState({
-          hoverPosition: 0,
-        })
+        onChange(
+          pipe(
+            head,
+            get("id")
+          )(items)
+        )
         break
       case "end":
-        this.setState({
-          hoverPosition: items.length - 1,
-        })
+        onChange(
+          pipe(
+            tail,
+            get("id")
+          )(items)
+        )
         break
       case "k":
       case "up":
-        this.setState(
-          (prevState): $Shape<StateType> => ({
-            hoverPosition: max([0, prevState.hoverPosition - 1]),
-          })
-        )
+        onChange(items[max([0, position - 1])].id)
         break
       case "j":
       case "down":
-        this.setState(
-          (prevState): $Shape<StateType> => ({
-            hoverPosition: min([items.length - 1, prevState.hoverPosition + 1]),
-          })
-        )
+        onChange(items[min([items.length - 1, position + 1])].id)
         break
       case "pageup":
-        this.setState(
-          (prevState): $Shape<StateType> => ({
-            hoverPosition: max([0, prevState.hoverPosition - pageSize]),
-          })
-        )
+        onChange(items[max([0, position - pageSize])].id)
         break
       case "pagedown":
-        this.setState(
-          (prevState): $Shape<StateType> => ({
-            hoverPosition: min([
-              items.length - 1,
-              prevState.hoverPosition + pageSize,
-            ]),
-          })
-        )
+        onChange(min([items.length - 1, position + pageSize]))
         break
       default:
     }
-  }
-
-  /**
-   * { function_description }
-   *
-   * @param  {string}  id     The identifier
-   * @param  {Object}  event  The event
-   *
-   * @return {undefined}
-   */
-  handleItemClick = (id: string /* , event: Object */) => {
-    const { items, onSelect } = this.props
-
-    this.setState(
-      {
-        hoverPosition: findIndexBy({ id })(items),
-      },
-      () => {
-        onSelect(id)
-      }
-    )
   }
 
   /**
@@ -262,5 +249,5 @@ class UIList extends React.Component<PropsType, StateType> {
   refList = {}
 }
 
-export type { UIListItemType }
+export type { UIListItem }
 export { UIList }

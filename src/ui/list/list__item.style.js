@@ -1,10 +1,11 @@
-export const baseStyle = {
+// @flow
+
+export const item = {
   left: 0,
-  width: "100%-4",
   height: 1,
   keys: true,
-  clickable: true,
   tags: true,
+  shrink: true,
   padding: {
     top: 0,
     left: 1,
@@ -12,21 +13,14 @@ export const baseStyle = {
     right: 0,
   },
   style: {
-    fg: "white",
-    bg: "transparent",
+    fg: -1,
     bold: false,
   },
 }
 
-export const isSelectedStyle = {
+export const selected = {
   style: {
-    bold: true,
-  },
-}
-export const isHoveredStyle = {
-  style: {
-    fg: "black",
-    bg: "white",
+    fg: "white",
     bold: true,
   },
 }

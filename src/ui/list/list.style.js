@@ -1,10 +1,13 @@
-export const baseStyle = {
+// @flow
+
+export const list = {
   keys: true,
-  mouse: true,
+  vi: true,
+  tags: true,
   scrollable: true,
   padding: {
     top: 0,
-    left: 1,
+    left: 0,
     bottom: 0,
     right: 0,
   },
@@ -14,16 +17,23 @@ export const baseStyle = {
   },
   border: {
     type: "line",
-    fg: "white",
-    bold: true,
   },
   style: {
-    fg: "white",
-    bg: "transparent",
+    border: {
+      fg: -1,
+    },
   },
 }
 
-export const donnoStyle = {
+export const listHasFocus = {
+  style: {
+    border: {
+      fg: "white",
+    },
+  },
+}
+
+export const donnoLabel = {
   bold: true,
   height: 3,
   shrink: true,
