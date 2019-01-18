@@ -6,16 +6,17 @@ import { basename } from "path"
 import { reduce, map } from "@asd14/m"
 
 import {
-  handleTestFileRun,
-  handleDebugToggle,
-  handleFilterChange,
-  handleFilterOpen,
-  handleFilterSubmit,
-  handleFilterClose,
+  changeSelected,
+  run,
+  detailsToggle,
+  filterOpen,
+  filterClose,
+  filterChange,
+  filterSubmit,
 } from "./actions"
 import { AppView } from "./app.view"
 
-type TestFilesType = {|
+type TestFile = {|
   path: string,
   name: string,
   content: string[],
@@ -24,7 +25,7 @@ type TestFilesType = {|
   isLoading: boolean,
 |}
 
-type PropsType = {|
+type Props = {|
   screen: Object,
   name: string,
   version: string,
@@ -35,25 +36,26 @@ type PropsType = {|
   rootPath: string,
 |}
 
-type StateType = {
-  files: TestFilesType[],
-  filesSelectedPath: string,
-  filesFilter: string,
+type State = {
+  files: TestFile[],
+  fileSelectedPath: string,
+  filterQuery: string,
   runArgs: string[],
   isDebugVisible: boolean,
   isFilterVisible: boolean,
 }
 
-type ActionsType = {
-  xHandleFileRun: (path: string) => void,
-  xHandleDebugToggle: () => void,
-  xHandleFilterChange: (value: string) => void,
+type Actions = {
+  xHandleChangeSelected: (path: string) => void,
+  xHandleRun: (paths: string | string[]) => void,
+  xHandleDetailsToggle: () => void,
   xHandleFilterOpen: () => void,
-  xHandleFilterSubmit: (value: string) => void,
-  xHandleFilterClose: (value: string) => void,
+  xHandleFilterClose: () => void,
+  xHandleFilterChange: (query: string) => void,
+  xHandleFilterSubmit: () => void,
 }
 
-class AppContainer extends React.Component<PropsType, StateType> {
+class AppContainer extends React.Component<Props, State> {
   /**
    * The constructor for a React component is called before it is mounted.
    * When implementing the constructor for a React.Component subclass, you
@@ -70,14 +72,19 @@ class AppContainer extends React.Component<PropsType, StateType> {
    *
    * @param {Object}  props  The properties
    */
-  constructor(props: PropsType) {
+  constructor(props: Props) {
     super(props)
 
     const { requireModules, filePattern, rootPath } = props
 
+    const filePaths = glob.sync(`**/${filePattern}`, {
+      absolute: true,
+      cwd: rootPath,
+    })
+
     this.state = {
       files: map(
-        (item): TestFilesType => ({
+        (item): TestFile => ({
           path: item,
           name: basename(item),
           content: [],
@@ -85,30 +92,15 @@ class AppContainer extends React.Component<PropsType, StateType> {
           signal: "",
           isLoading: false,
         })
-      )(
-        glob.sync(`**/${filePattern}`, {
-          absolute: true,
-          cwd: rootPath,
-        })
-      ),
-      filesSelectedPath: "",
-      filesFilter: "",
+      )(filePaths),
+      fileSelectedPath: filePaths[0],
+      filterQuery: "",
       runArgs: reduce((acc, item): string[] => [...acc, "-r", item], [])(
         requireModules
       ),
       isDebugVisible: false,
       isFilterVisible: false,
     }
-
-    this.xHandleDebugToggle = handleDebugToggle(this.setState.bind(this))
-    this.xHandleFilterChange = handleFilterChange(this.setState.bind(this))
-    this.xHandleFilterOpen = handleFilterOpen(this.setState.bind(this))
-    this.xHandleFilterSubmit = handleFilterSubmit(this.setState.bind(this))
-    this.xHandleFilterClose = handleFilterClose(this.setState.bind(this))
-    this.xHandleFileRun = handleTestFileRun(
-      this.state,
-      this.setState.bind(this)
-    )
   }
 
   /**
@@ -126,11 +118,21 @@ class AppContainer extends React.Component<PropsType, StateType> {
     const { screen } = this.props
 
     screen.key(["i"], () => {
-      this.xHandleDebugToggle()
+      this.handleDetailsToggle()
     })
 
     screen.key(["/"], () => {
-      this.xHandleFilterOpen()
+      this.handleFilterOpen()
+    })
+
+    screen.key(["tab"], () => {
+      screen.focusNext()
+    })
+
+    screen.key(["escape"], () => {
+      const { isFilterVisible } = this.state
+
+      isFilterVisible && this.handleFilterClose()
     })
 
     screen.onceKey(["C-c"], () => {
@@ -150,8 +152,8 @@ class AppContainer extends React.Component<PropsType, StateType> {
     const { name, version, projectName, projectVersion } = this.props
     const {
       files,
-      filesSelectedPath,
-      filesFilter,
+      fileSelectedPath,
+      filterQuery,
       runArgs,
       isDebugVisible,
       isFilterVisible,
@@ -165,41 +167,39 @@ class AppContainer extends React.Component<PropsType, StateType> {
         projectVersion={projectVersion}
         store={{
           files,
-          filesSelectedPath,
-          filesFilter,
+          fileSelectedPath,
+          filterQuery,
           runArgs,
           isDebugVisible,
           isFilterVisible,
         }}
         actions={{
-          xHandleFileRun: this.xHandleFileRun,
-          xHandleDebugToggle: this.xHandleDebugToggle,
-          xHandleFilterChange: this.xHandleFilterChange,
-          xHandleFilterOpen: this.xHandleFilterOpen,
-          xHandleFilterSubmit: this.xHandleFilterSubmit,
-          xHandleFilterClose: this.xHandleFilterClose,
+          xHandleChangeSelected: this.handleChangeSelected,
+          xHandleRun: this.handleRun,
+          xHandleDetailsToggle: this.handleDetailsToggle,
+          xHandleFilterChange: this.handleFilterChange,
+          xHandleFilterOpen: this.handleFilterOpen,
+          xHandleFilterSubmit: this.handleFilterSubmit,
+          xHandleFilterClose: this.handleFilterClose,
         }}
       />
     )
   }
 
-  // Need for Flow. Will get properly set in constructor function
-  xHandleDebugToggle = () => {}
+  handleChangeSelected = changeSelected(this.setState.bind(this))
 
-  xHandleFilterChange = () => {}
+  handleRun = run(this.setState.bind(this))
 
-  xHandleFilterOpen = () => {}
+  handleDetailsToggle = detailsToggle(this.setState.bind(this))
 
-  xHandleFilterSubmit = () => {}
+  handleFilterOpen = filterOpen(this.setState.bind(this))
 
-  xHandleFilterClose = () => {}
+  handleFilterClose = filterClose(this.setState.bind(this))
 
-  xHandleFileRun = () => {}
+  handleFilterChange = filterChange(this.setState.bind(this))
+
+  handleFilterSubmit = filterSubmit(this.setState.bind(this))
 }
 
 export { AppContainer }
-export type {
-  StateType as AppStateType,
-  ActionsType as AppActionsType,
-  TestFilesType,
-}
+export type { State as AppState, Actions as AppActions, TestFile }
