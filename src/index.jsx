@@ -12,10 +12,14 @@ const screen = neoBlessed.screen({
   title: `${pkg.name} v${pkg.version}`,
   tabSize: 2,
   autoPadding: true,
+
+  // Whether the focused element grabs all keypresses
+  grabKeys: true,
+
   smartCSR: true,
   dockBorders: true,
   fullUnicode: true,
-  ignoreLocked: ["C-c"],
+  ignoreLocked: ["C-c", "tab"],
 })
 
 export default ({ requireModules, rootPath, filePattern }) => {
