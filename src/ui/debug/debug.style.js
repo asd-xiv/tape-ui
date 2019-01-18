@@ -1,8 +1,9 @@
-export const baseStyle = {
+// @flow
+
+export const debug = {
   keys: true,
   vi: true,
   tags: true,
-  mouse: true,
   scrollable: true,
   padding: {
     top: 0,
@@ -16,7 +17,13 @@ export const baseStyle = {
   },
   border: {
     type: "line",
-    fg: "white",
+    fg: -1,
   },
-  style: {},
+  style: {
+    focus: {
+      border: {
+        fg: "white",
+      },
+    },
+  },
 }

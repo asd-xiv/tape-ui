@@ -3,20 +3,19 @@
 import * as React from "react"
 import { deepEqual, map, pipe, join } from "@asd14/m"
 
-import { baseStyle } from "./debug.style"
+import * as style from "./debug.style"
 
-type PropsType = {|
+type Props = {|
   label: string,
-  value?: Object,
+  value: Object,
   top?: number | string,
   left?: number | string,
   width?: number | string,
   height?: number | string,
 |}
 
-class UIDebug extends React.Component<PropsType> {
+class UIDebug extends React.Component<Props> {
   static defaultProps = {
-    value: {},
     top: "center",
     left: "center",
     width: "50%",
@@ -41,8 +40,7 @@ class UIDebug extends React.Component<PropsType> {
    *
    * @return {boolean}
    */
-  shouldComponentUpdate = (nextProps: PropsType): boolean =>
-    !deepEqual(this.props, nextProps)
+  shouldComponentUpdate = nextProps => !deepEqual(this.props)(nextProps)
 
   /**
    * Examine this.props and this.state and return a single React element. This
@@ -51,13 +49,13 @@ class UIDebug extends React.Component<PropsType> {
    *
    * @return {React.Node}
    */
-  render = (): React.Node => {
+  render = () => {
     const { label, value, top, left, width, height } = this.props
 
     return (
       <box
-        class={[baseStyle]}
-        label={`[ ${label} ]`}
+        class={style.debug}
+        label={label}
         top={top}
         left={left}
         width={width}
