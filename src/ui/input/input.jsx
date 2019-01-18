@@ -5,7 +5,7 @@ import { isEmpty } from "@asd14/m"
 
 import { labelStyle, inputStyle, wrapperStyle } from "./input.style"
 
-type PropType = {|
+type Props = {|
   label: string,
   value: string,
   top: number | string,
@@ -14,16 +14,14 @@ type PropType = {|
   onChange: (value: string) => void,
   onSubmit: (value: string) => void,
   onCancel: (value: string) => void,
-  hasFocusOnMount: boolean,
 |}
 
-export class UIInput extends React.PureComponent<PropType> {
+export class UIInput extends React.PureComponent<Props> {
   static defaultProps = {
     label: "",
     top: "center",
     left: "center",
     width: "50%",
-    hasFocusOnMount: true,
   }
 
   /**
@@ -38,7 +36,7 @@ export class UIInput extends React.PureComponent<PropType> {
    *  - call this.setState as it will result in a re-render
    */
   componentDidMount = () => {
-    const { value, hasFocusOnMount } = this.props
+    const { value } = this.props
 
     this.refFilterInput.on("keypress", (code, key) => {
       if (!isEmpty(code) && /[a-zA-Z0-9 \-=\.]/.test(code)) {
@@ -50,7 +48,7 @@ export class UIInput extends React.PureComponent<PropType> {
     })
 
     this.refFilterInput.setValue(value)
-    hasFocusOnMount && this.refFilterInput.focus()
+    this.refFilterInput.focus()
   }
 
   /**
@@ -70,15 +68,14 @@ export class UIInput extends React.PureComponent<PropType> {
         class={wrapperStyle}
         width={width}
         top={top}
-        left={left}
-        height={3}>
+        left={left}>
         {!isEmpty(label) && (
           <box class={labelStyle} width={label.length} content={label} />
         )}
         <textbox
           ref={this.linkRefFilterInput}
           class={inputStyle}
-          left={label.length + 1}
+          left={label.length}
           inputOnFocus={true}
           width={`100%-${label.length + 4}`}
           content={value}

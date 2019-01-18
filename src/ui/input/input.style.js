@@ -1,14 +1,10 @@
 export const wrapperStyle = {
+  height: 1,
   padding: {
     top: 0,
-    left: 1,
+    left: 0,
     bottom: 0,
     right: 0,
-  },
-  border: {
-    type: "line",
-    fg: "white",
-    bold: true,
   },
 }
 
