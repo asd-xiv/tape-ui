@@ -2,24 +2,26 @@
 
 import * as React from "react"
 
-import { baseStyle } from "./label.style"
+import * as style from "./label.style"
 
 const asciiFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
-type PropsType = {|
+type Props = {|
   text: string,
   top: number | string,
   left: number | string,
   isLoading: boolean,
+  hasFocus: boolean,
 |}
 
-type StateType = {|
+type State = {
   frameNumber: number,
-|}
+}
 
-export class UILabel extends React.PureComponent<PropsType, StateType> {
+export class UILabel extends React.PureComponent<Props, State> {
   static defaultProps = {
     isLoading: false,
+    hasFocus: false,
   }
 
   state = {
@@ -63,7 +65,7 @@ export class UILabel extends React.PureComponent<PropsType, StateType> {
    *
    * @return {undefined}
    */
-  componentDidUpdate = (prevProps: PropsType) => {
+  componentDidUpdate = (prevProps: Props) => {
     const { isLoading } = this.props
 
     if (isLoading !== prevProps.isLoading) {
@@ -79,17 +81,17 @@ export class UILabel extends React.PureComponent<PropsType, StateType> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const { text, top, left, isLoading } = this.props
+    const { text, top, left, isLoading, hasFocus } = this.props
     const { frameNumber } = this.state
 
     return (
       <box
-        class={baseStyle}
+        class={[style.label, hasFocus && style.hasFocus]}
         top={top}
         left={left}
         content={
           isLoading
-            ? `{bold}{blue-fg}${asciiFrames[frameNumber]}{/} ${text}`
+            ? `{bold}{blue-fg} ${asciiFrames[frameNumber]}{/} ${text}`
             : text
         }
       />
@@ -114,11 +116,9 @@ export class UILabel extends React.PureComponent<PropsType, StateType> {
 
     if (isLoading) {
       this.spinnerInterval = setInterval(() => {
-        this.setState(
-          (prevState): $Shape<StateType> => ({
-            frameNumber: (prevState.frameNumber + 1) % asciiFrames.length,
-          })
-        )
+        this.setState(prevState => ({
+          frameNumber: (prevState.frameNumber + 1) % asciiFrames.length,
+        }))
       }, 70)
     }
   }
