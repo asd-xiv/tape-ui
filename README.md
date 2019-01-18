@@ -1,4 +1,4 @@
-<!-- markdownlint-disable first-line-h1 line-length -->
+<!-- markdownlint-disable line-length -->
 
 # Tape UI [![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
 
@@ -8,15 +8,17 @@
 
 ---
 
-<!-- MarkdownTOC levels="2,3" autolink="true" autoanchor="false" -->
+<!-- vim-markdown-toc GFM -->
 
-- [Install](#install)
-- [Develop](#develop)
-- [Use](#use)
-- [Changelog](#changelog)
-    - [0.5.0 - 9 January 2019](#050---9-january-2019)
+* [Install](#install)
+* [Develop](#develop)
+* [Use](#use)
+* [Changelog](#changelog)
+  * [0.5.1 - 18 January 2019](#051---18-january-2019)
+    * [Change](#change)
+    * [Add](#add)
 
-<!-- /MarkdownTOC -->
+<!-- vim-markdown-toc -->
 
 ## Install
 
@@ -54,11 +56,12 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.5.0 - 9 January 2019
+### 0.5.1 - 18 January 2019
+
+#### Change
+
+* Cleanup and renaming
 
 #### Add
 
-- [`UIInput`](src/ui/input/input.jsx) component. Wrapper over blessed textbox
-- [`UILabel`](src/ui/label/label.jsx) component with spinner support
-- `/` shortcut for filtering files
-- Output memory usage
+* `tab` shortcut changing focused window

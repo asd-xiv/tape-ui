@@ -82,7 +82,7 @@
    */
   "ul-indent": {
     // Default: 2
-    "indent": 4
+    "indent": 2
   },
 
   /*
