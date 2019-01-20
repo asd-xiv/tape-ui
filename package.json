@@ -33,7 +33,7 @@
     "setup": "npm run clean && npm i && flow-typed install && npm audit fix",
     "update": "npm-check -u",
     "----DEV--------------------------------------": "",
-    "start:dev": "nodemon --watch src --exec \"npm run build\"",
+    "start:dev": "nodemon -e js,jsx --watch src --exec \"npm run build\"",
     "start": "npm run build && node bin/cli.js",
     "----BUILD------------------------------------": "",
     "build": "rm -rf dist/* && babel src --out-dir dist",
@@ -59,7 +59,7 @@
     "tape": "4.9.2"
   },
   "peerDependencies": {
-    "tape": "^4.9.2"
+    "tape": "4.9.2"
   },
   "devDependencies": {
     "@asd14/eslint-config": "4.0.2",
@@ -74,8 +74,8 @@
     "@babel/preset-react": "7.0.0",
     "@babel/register": "7.0.0",
     "babel-eslint": "10.0.1",
-    "eslint": "5.12.0",
-    "eslint-config-prettier": "3.4.0",
+    "eslint": "5.12.1",
+    "eslint-config-prettier": "3.6.0",
     "eslint-plugin-compat": "2.6.3",
     "eslint-plugin-flowtype": "3.2.1",
     "eslint-plugin-flowtype-errors": "3.6.0",
@@ -85,9 +85,9 @@
     "eslint-plugin-no-inferred-method-name": "1.0.2",
     "eslint-plugin-prettier": "3.0.1",
     "eslint-plugin-promise": "4.0.1",
-    "eslint-plugin-react": "7.12.3",
-    "eslint-plugin-unicorn": "6.0.1",
-    "flow-bin": "0.90.0",
+    "eslint-plugin-react": "7.12.4",
+    "eslint-plugin-unicorn": "7.0.0",
+    "flow-bin": "0.91.0",
     "flow-typed": "2.5.1",
     "markdownlint-cli": "0.13.0",
     "nodemon": "1.18.9",
