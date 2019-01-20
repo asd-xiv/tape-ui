@@ -1,6 +1,6 @@
 import * as React from "react"
 import neoBlessed from "neo-blessed"
-import { resolve, join } from "path"
+import { join } from "path"
 import { createBlessedRenderer } from "react-blessed"
 
 import { AppContainer } from "./app/app.container"
@@ -32,7 +32,7 @@ export default ({ requireModules, rootPath, filePattern }) => {
       projectVersion={projectPkg.version}
       requireModules={requireModules}
       filePattern={filePattern}
-      rootPath={resolve(join(process.cwd(), rootPath))}
+      rootPath={join(process.cwd(), rootPath)}
     />,
     screen
   )
