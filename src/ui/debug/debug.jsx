@@ -22,25 +22,8 @@ class UIDebug extends React.Component<Props> {
     height: "50%",
   }
 
-  /**
-   * This function will be called internally with next values of props, state
-   * and object. Developer can use those to verify that the change requires a
-   * re-render or not and return false to prevent the re-rendering from
-   * happening. In other case, you are expected to return true.
-   *
-   * DO
-   *  - use for increasing performance of poor performing Components
-   *
-   * DON’T
-   *  - cause any side effects (AJAX calls etc.)
-   *  - call this.setState
-   *
-   * @param  {Object}  nextProps  Next props
-   * @param  {Object}  nextState  Next state
-   *
-   * @return {boolean}
-   */
-  shouldComponentUpdate = nextProps => !deepEqual(this.props)(nextProps)
+  shouldComponentUpdate = (nextProps: Props) =>
+    !deepEqual(this.props)(nextProps)
 
   /**
    * Examine this.props and this.state and return a single React element. This

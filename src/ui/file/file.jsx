@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { isEmpty } from "@asd14/m"
+import { deepEqual, isEmpty } from "@asd14/m"
 
 import * as style from "./file.style"
 
@@ -12,17 +12,15 @@ type Props = {|
   left: number | string,
   width: number | string,
   height: number | string,
-  content: string[],
+  content: string,
   code: number,
-  signal: string,
   isLoading: boolean,
 |}
 
-class UIFile extends React.Component<Props> {
+class UIFile extends React.PureComponent<Props> {
   static defaultProps = {
-    content: [],
+    content: "",
     code: NaN,
-    signal: "-",
     isLoading: false,
   }
 
@@ -47,7 +45,7 @@ class UIFile extends React.Component<Props> {
         width={width}
         height={height}
         scrollOnInput={true}
-        content={content.join("\n")}
+        content={content}
       />
     )
   }
