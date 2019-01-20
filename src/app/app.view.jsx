@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import {
+  pipe,
+  max,
   map,
   findBy,
   replace,
@@ -24,7 +26,7 @@ type Props = {
   actions: AppActions,
   name: string,
   projectVersion: string,
-  store: AppState,
+  store: $Shape<AppState>,
   version: string,
 }
 
@@ -56,11 +58,17 @@ class AppView extends React.Component<Props> {
         xHandleFilterClose,
       },
     } = this.props
+
     const filesSelected: TestFile =
       findBy({ path: fileSelectedPath })(files) ?? {}
     const filesFiltered = filter(item => contains(filterQuery)(item.path))(
       files
     )
+    const listWidth =
+      pipe(
+        map(item => item.name.length),
+        max
+      )(files) + 5
 
     return [
       <UIList
@@ -71,10 +79,10 @@ class AppView extends React.Component<Props> {
             ? `${files.length} files`
             : `${filesFiltered.length}/${files.length} files`
         }
-        top="0"
+        top={3}
         left="0"
-        width="30%"
-        height="100%-1"
+        width={listWidth}
+        height="100%-6"
         items={map(
           (item: TestFile): ListItem => ({
             id: item.path,
@@ -93,13 +101,12 @@ class AppView extends React.Component<Props> {
         key="app-files-selected"
         label={filesSelected.name}
         path={filesSelected.path}
-        top="0"
-        left="30%"
-        width="70%"
+        top={0}
+        left={listWidth}
+        width={`100%-${listWidth}`}
         height={isDebugVisible ? "70%" : "100%-1"}
-        content={filesSelected.content}
+        content={[filesSelected.stdout, filesSelected.stderr].join("\n")}
         code={filesSelected.code}
-        signal={filesSelected.signal}
         isLoading={filesSelected.isLoading}
       />,
       isDebugVisible ? (
@@ -113,8 +120,8 @@ class AppView extends React.Component<Props> {
             "Exit code": filesSelected.code,
           }}
           top="70%"
-          left="30%"
-          width="70%"
+          left={listWidth}
+          width={`100%-${listWidth}`}
           height="30%"
         />
       ) : null,
