@@ -2,26 +2,18 @@
 
 import * as React from "react"
 import glob from "glob"
+import { fork } from "child_process"
 import { basename } from "path"
-import { reduce, map } from "@asd14/m"
+import { has, forEach, reduce, map } from "@asd14/m"
 
-import {
-  changeSelected,
-  run,
-  detailsToggle,
-  filterOpen,
-  filterClose,
-  filterChange,
-  filterSubmit,
-} from "./actions"
 import { AppView } from "./app.view"
 
 type TestFile = {|
   path: string,
   name: string,
-  content: string[],
+  stdout: string,
+  stderr: string,
   code: number,
-  signal: string,
   isLoading: boolean,
 |}
 
@@ -76,28 +68,51 @@ class AppContainer extends React.Component<Props, State> {
     super(props)
 
     const { requireModules, filePattern, rootPath } = props
-
     const filePaths = glob.sync(`**/${filePattern}`, {
       absolute: true,
       cwd: rootPath,
     })
 
+    // Offloading all file execution to secondary process
+    this.executor = fork(`${__dirname}/../lib/executor.js`)
+    this.executorRunArgs = reduce(
+      (acc, item): string[] => [...acc, "-r", item],
+      []
+    )(requireModules)
+
+    // Update state with file data coming from secondary forked process
+    this.executor &&
+      this.executor.on("message", (file: TestFile) => {
+        const { files } = this.state
+
+        this.setState({
+          files: map(item =>
+            item.path === file.path
+              ? {
+                  ...item,
+                  ...file,
+                  isLoading: false,
+                }
+              : item
+          )(files),
+        })
+      })
+
+    // default state
     this.state = {
       files: map(
         (item): TestFile => ({
           path: item,
           name: basename(item),
-          content: [],
+          stdout: "",
+          stderr: "",
           code: -1,
-          signal: "",
           isLoading: false,
         })
       )(filePaths),
       fileSelectedPath: filePaths[0],
       filterQuery: "",
-      runArgs: reduce((acc, item): string[] => [...acc, "-r", item], [])(
-        requireModules
-      ),
+      runArgs: this.executorRunArgs,
       isDebugVisible: false,
       isFilterVisible: false,
     }
@@ -186,19 +201,77 @@ class AppContainer extends React.Component<Props, State> {
     )
   }
 
-  handleChangeSelected = changeSelected(this.setState.bind(this))
+  /**
+   * Send file(s) to get executed by secondary executor process
+   *
+   * @param {string|string[]} path File path
+   *
+   * @returns {undefined}
+   */
+  handleRun = (path: string | string[]) => {
+    const { files } = this.state
+    const paths = Array.isArray(path) ? path : [path]
 
-  handleRun = run(this.setState.bind(this))
+    this.setState({
+      files: map(item =>
+        has(item.path)(paths)
+          ? {
+              ...item,
+              code: -1,
+              signal: "",
+              isLoading: true,
+            }
+          : item
+      )(files),
+    })
 
-  handleDetailsToggle = detailsToggle(this.setState.bind(this))
+    // send file to secondary process for execution
+    forEach(item => {
+      this.executor &&
+        this.executor.send({ path: item, runArgs: this.executorRunArgs })
+    })(paths)
+  }
 
-  handleFilterOpen = filterOpen(this.setState.bind(this))
+  handleChangeSelected = (path: string) => {
+    this.setState({
+      fileSelectedPath: path,
+    })
+  }
 
-  handleFilterClose = filterClose(this.setState.bind(this))
+  handleDetailsToggle = () => {
+    this.setState(prevState => ({
+      isDebugVisible: !prevState.isDebugVisible,
+    }))
+  }
 
-  handleFilterChange = filterChange(this.setState.bind(this))
+  handleFilterOpen = () => {
+    this.setState({
+      isFilterVisible: true,
+    })
+  }
 
-  handleFilterSubmit = filterSubmit(this.setState.bind(this))
+  handleFilterClose = () => {
+    this.setState({
+      filterQuery: "",
+      isFilterVisible: false,
+    })
+  }
+
+  handleFilterChange = (query: string) => {
+    this.setState({
+      filterQuery: query,
+    })
+  }
+
+  handleFilterSubmit = () => {
+    this.setState({
+      isFilterVisible: false,
+    })
+  }
+
+  executor = undefined
+
+  executorRunArgs = []
 }
 
 export { AppContainer }
