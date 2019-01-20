@@ -10,7 +10,7 @@
 import { spawn } from "child_process"
 
 const runOne = ({ path, runArgs }) => {
-  const fileSpawn = spawn("node", [path, ...runArgs], {
+  const child = spawn("node", [...runArgs, path], {
     detached: false,
     cwd: process.cwd(),
     env: {},
@@ -19,15 +19,15 @@ const runOne = ({ path, runArgs }) => {
   const stdout = []
   const stderr = []
 
-  fileSpawn.stdout.on("data", data => {
+  child.stdout.on("data", data => {
     stdout.push(data.toString())
   })
 
-  fileSpawn.stderr.on("data", data => {
+  child.stderr.on("data", data => {
     stderr.push(data.toString())
   })
 
-  fileSpawn.on("exit", code => {
+  child.on("exit", code => {
     process.send({
       path,
       code,
