@@ -3,7 +3,6 @@
 export const item = {
   left: 0,
   height: 1,
-  keys: true,
   tags: true,
   shrink: true,
   padding: {

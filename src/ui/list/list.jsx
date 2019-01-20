@@ -153,7 +153,7 @@ class UIList extends React.Component<Props, State> {
               id={item.id}
               code={item.code}
               label={item.label}
-              top={index}
+              top={`${top}+${index}`}
               isSelected={selectedId === item.id}
               isLoading={item.isLoading}
             />
@@ -162,8 +162,8 @@ class UIList extends React.Component<Props, State> {
       </box>,
       <UILabel
         key="files-list-label"
-        top={top}
-        left={isLoading ? `${left}+1` : `${left}+4`}
+        top={typeof top === "number" ? top - 2 : `${top}-2`}
+        left={isLoading ? left : `${left}+3`}
         text={label}
         isLoading={isLoading}
       />,
@@ -197,8 +197,10 @@ class UIList extends React.Component<Props, State> {
     const pageSize = this.refList.height - 2
 
     switch (key.full) {
-      case "enter":
-      case "space":
+      case "M-r":
+        onSelect(map(get("id"))(items))
+        break
+      case "r":
         onSelect(items[position].id)
         break
       case "home":

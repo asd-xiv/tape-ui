@@ -14,7 +14,7 @@ type ListItem = {|
 
 type Props = {|
   ...ListItem,
-  top: number,
+  top: number | string,
   isSelected?: boolean,
 |}
 
@@ -46,6 +46,7 @@ class UIListItem extends React.PureComponent<Props> {
       <box
         class={[style.item, isSelected && style.selected]}
         top={top}
+        keyable={false}
         content={`${color}${
           figures.squareSmallFilled
         }{/} ${underline}${label}{/}`}

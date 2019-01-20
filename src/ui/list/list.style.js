@@ -1,7 +1,7 @@
 // @flow
 
 export const list = {
-  keys: true,
+  keyable: true,
   vi: true,
   tags: true,
   scrollable: true,
@@ -14,9 +14,6 @@ export const list = {
   scrollbar: {
     ch: " ",
     inverse: true,
-  },
-  border: {
-    type: "line",
   },
   style: {
     border: {
