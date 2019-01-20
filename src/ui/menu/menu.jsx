@@ -51,28 +51,20 @@ class UIMenu extends React.PureComponent<PropsType, StateType> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const { name, version, isDebugVisible, isFilterVisible } = this.props
+    const { name, version, isDebugVisible } = this.props
     const { memory } = this.state
 
     const actions = {
-      filter: isFilterVisible
-        ? {
-            Esc: "Cancel",
-            Enter: "Keep",
-          }
-        : {
-            "/": "Filter",
-          },
-      list: isFilterVisible
-        ? {}
-        : {
-            Enter: "Run",
-          },
-      file: isFilterVisible
-        ? {}
-        : {
-            i: isDebugVisible ? "Hide details" : "Show details",
-          },
+      filter: {
+        "/": "Filter",
+      },
+      list: {
+        r: "Run",
+        "A+r": "Run all",
+      },
+      file: {
+        i: isDebugVisible ? "Hide details" : "Show details",
+      },
       global: {
         "C-c": "Exit",
       },
