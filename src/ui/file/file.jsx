@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react"
-import { deepEqual, isEmpty } from "@asd14/m"
+import { isEmpty } from "@asd14/m"
 
 import * as style from "./file.style"
 
