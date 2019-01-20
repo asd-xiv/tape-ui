@@ -14,8 +14,7 @@
 * [Develop](#develop)
 * [Use](#use)
 * [Changelog](#changelog)
-  * [0.5.1 - 18 January 2019](#051---18-january-2019)
-    * [Change](#change)
+  * [0.6.0 - 20 January 2019](#060---20-january-2019)
     * [Add](#add)
 
 <!-- vim-markdown-toc -->
@@ -56,12 +55,8 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.5.1 - 18 January 2019
-
-#### Change
-
-* Cleanup and renaming
+### 0.6.0 - 20 January 2019
 
 #### Add
 
-* `tab` shortcut changing focused window
+* `ALT+r` shortcut for running all files
