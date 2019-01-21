@@ -164,7 +164,7 @@ class AppContainer extends React.Component<Props, State> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const { name, version, projectName, projectVersion } = this.props
+    const { name, version } = this.props
     const {
       files,
       fileSelectedPath,
@@ -178,8 +178,6 @@ class AppContainer extends React.Component<Props, State> {
       <AppView
         name={name}
         version={version}
-        projectName={projectName}
-        projectVersion={projectVersion}
         store={{
           files,
           fileSelectedPath,
