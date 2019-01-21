@@ -7,24 +7,26 @@ export const file = {
   scrollable: true,
   padding: {
     top: 0,
-    left: 2,
+    left: 1,
     bottom: 0,
     right: 0,
+  },
+  border: {
+    type: "line",
+    fg: -1,
   },
   scrollbar: {
     ch: " ",
     inverse: true,
-  },
-  border: {
-    type: "line",
+    fg: "white",
   },
   style: {
-    border: {
-      fg: -1,
-    },
     focus: {
       border: {
         fg: "white",
+      },
+      scrollbar: {
+        fg: "blue",
       },
     },
   },

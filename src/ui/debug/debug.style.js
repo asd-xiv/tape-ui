@@ -7,13 +7,14 @@ export const debug = {
   scrollable: true,
   padding: {
     top: 0,
-    left: 2,
+    left: 1,
     bottom: 0,
     right: 0,
   },
   scrollbar: {
     ch: " ",
     inverse: true,
+    fg: "white",
   },
   border: {
     type: "line",
@@ -21,6 +22,9 @@ export const debug = {
   },
   style: {
     focus: {
+      scrollbar: {
+        fg: "blue",
+      },
       border: {
         fg: "white",
       },

@@ -16,8 +16,6 @@ import {
 import { UIListItem } from "./list__item"
 import type { ListItem } from "./list__item"
 
-import { UILabel } from "../label/label"
-
 import * as style from "./list.style"
 
 type Props = {|
@@ -28,14 +26,12 @@ type Props = {|
   left: number | string,
   width: number | string,
   height: number | string,
-  isLoading: boolean,
   onChange: (path: string) => void,
   onSelect: (path: string) => void,
 |}
 
 type State = {
   position: number,
-  hasFocus: boolean,
 }
 
 class UIList extends React.Component<Props, State> {
@@ -46,12 +42,10 @@ class UIList extends React.Component<Props, State> {
     left: "center",
     width: "50%",
     height: "50%",
-    isLoading: false,
   }
 
   state = {
     position: 0,
-    hasFocus: false,
   }
 
   static getDerivedStateFromProps = (props: Props) => {
@@ -120,29 +114,17 @@ class UIList extends React.Component<Props, State> {
    * @return {React.Node}
    */
   render = (): React.Node => {
-    const {
-      selectedId,
-      label,
-      top,
-      left,
-      width,
-      height,
-      items,
-      isLoading,
-    } = this.props
-    const { hasFocus } = this.state
+    const { selectedId, top, left, width, height, items } = this.props
 
     return [
       <box
         key="files-list-items"
         ref={this.linkRefList}
-        class={[style.list, hasFocus && style.listHasFocus]}
+        class={style.list}
         top={top}
         left={left}
         width={width}
-        height={height}
-        onBlur={this.handleBlur}
-        onFocus={this.handleFocus}>
+        height={height}>
         {isEmpty(items) ? (
           <box content="¯\_(ツ)_/¯" class={style.donnoLabel} />
         ) : null}
@@ -160,26 +142,7 @@ class UIList extends React.Component<Props, State> {
           )
         )(items)}
       </box>,
-      <UILabel
-        key="files-list-label"
-        top={typeof top === "number" ? top - 2 : `${top}-2`}
-        left={isLoading ? left : `${left}+3`}
-        text={label}
-        isLoading={isLoading}
-      />,
     ]
-  }
-
-  handleFocus = () => {
-    this.setState({
-      hasFocus: true,
-    })
-  }
-
-  handleBlur = () => {
-    this.setState({
-      hasFocus: false,
-    })
   }
 
   /**

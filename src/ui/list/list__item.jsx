@@ -37,6 +37,8 @@ class UIListItem extends React.PureComponent<Props> {
 
     const color = isLoading
       ? "{blue-fg}"
+      : code === -1
+      ? "{white-fg}"
       : code === 0
       ? "{green-fg}"
       : "{red-fg}"

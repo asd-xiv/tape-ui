@@ -26,10 +26,8 @@ export default ({ requireModules, rootPath, filePattern }) => {
   createBlessedRenderer(neoBlessed)(
     <AppContainer
       screen={screen}
-      name={pkg.name}
-      version={pkg.version}
-      projectName={projectPkg.name}
-      projectVersion={projectPkg.version}
+      name={projectPkg.name}
+      version={projectPkg.version}
       requireModules={requireModules}
       filePattern={filePattern}
       rootPath={join(process.cwd(), rootPath)}

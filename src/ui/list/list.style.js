@@ -14,18 +14,20 @@ export const list = {
   scrollbar: {
     ch: " ",
     inverse: true,
+    fg: "white",
+  },
+  border: {
+    type: "line",
+    fg: -1,
   },
   style: {
-    border: {
-      fg: -1,
-    },
-  },
-}
-
-export const listHasFocus = {
-  style: {
-    border: {
-      fg: "white",
+    focus: {
+      border: {
+        fg: "white",
+      },
+      scrollbar: {
+        fg: "blue",
+      },
     },
   },
 }
