@@ -10,14 +10,21 @@
 
 <!-- vim-markdown-toc GFM -->
 
+* [Features](#features)
 * [Install](#install)
 * [Develop](#develop)
 * [Use](#use)
 * [Changelog](#changelog)
-  * [0.6.0 - 20 January 2019](#060---20-january-2019)
-    * [Add](#add)
+  * [0.6.1 - 20 January 2019](#061---20-january-2019)
+    * [Change](#change)
 
 <!-- vim-markdown-toc -->
+
+## Features
+
+* :floppy_disk: Terminal UI with VIM shortcuts
+* :godmode: Tests run in parallel
+* :mag: Selective run files
 
 ## Install
 
@@ -55,8 +62,8 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.6.0 - 20 January 2019
+### 0.6.1 - 20 January 2019
 
-#### Add
+#### Change
 
-* `ALT+r` shortcut for running all files
+* Various UI changes
