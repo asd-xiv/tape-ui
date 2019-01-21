@@ -17,7 +17,6 @@ export const list = {
     fg: "white",
   },
   border: {
-    type: "line",
     fg: -1,
   },
   style: {
