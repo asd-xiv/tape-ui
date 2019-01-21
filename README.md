@@ -2,9 +2,9 @@
 
 # Tape UI [![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
 
-![Tape UI](docs/screenshot.png)
-
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
+
+![Tape UI](docs/screenshot.png)
 
 ---
 
@@ -15,7 +15,7 @@
 * [Develop](#develop)
 * [Use](#use)
 * [Changelog](#changelog)
-  * [0.6.1 - 20 January 2019](#061---20-january-2019)
+  * [0.6.1 - 21 January 2019](#061---21-january-2019)
     * [Change](#change)
 
 <!-- vim-markdown-toc -->
@@ -62,7 +62,7 @@ Add script in `package.json`
 
 History of all changes in [CHANGELOG.md](CHANGELOG.md)
 
-### 0.6.1 - 20 January 2019
+### 0.6.1 - 21 January 2019
 
 #### Change
 
