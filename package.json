@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@asd14/m": "0.17.1",
+    "@babel/runtime": "7.7.7",
     "figures": "2.0.0",
     "glob": "7.1.3",
     "minimist": "1.2.0",
