@@ -1,6 +1,6 @@
 <!-- markdownlint-disable line-length -->
 
-# Tape UI [![npm package version](https://badge.fury.io/js/%40asd14%2Ftape-ui.svg)](https://badge.fury.io/js/%40asd14%2Ftape-ui)
+# WIP: Tape UI [![npm package version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
 
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
 
@@ -12,38 +12,23 @@
 
 * [Features](#features)
 * [Install](#install)
-* [Develop](#develop)
 * [Use](#use)
+* [Develop](#develop)
+* [Commit messages](#commit-messages)
 * [Changelog](#changelog)
-  * [0.6.1 - 21 January 2019](#061---21-january-2019)
-    * [Change](#change)
 
 <!-- vim-markdown-toc -->
 
 ## Features
 
-* :floppy_disk: Terminal UI with VIM shortcuts
-* :godmode: Tests run in parallel
-* :mag: Selective run files
+* [ ] Terminal UI with VIM shortcuts - [neo-blessed](https://github.com/embarklabs/neo-blessed) and [react-blessed](https://github.com/Yomguithereal/react-blessed)
+* [ ] Test files run in separate workers
+* [ ] Auto run only relevant tests based on file changes
 
 ## Install
 
 ```bash
-npm i --save-exact @asd14/tape-ui
-```
-
-## Develop
-
-```bash
-git clone git@github.com:asd14/tape-ui.git && \
-  cd tape-ui && \
-  npm run setup
-
-# run tests (any `*.test.js`) once
-npm test
-
-# watch `src` folder for changes and run test automatically
-npm run tdd
+npm i --save-exact @mutant-ws/tape-ui
 ```
 
 ## Use
@@ -58,12 +43,42 @@ Add script in `package.json`
 }
 ```
 
+## Develop
+
+```bash
+git clone git@github.com:mutant-ws/tape-ui.git && \
+  cd tape-ui && \
+  npm run setup
+
+# run tests (any `*.test.js`) once
+npm test
+
+# watch `src` folder for changes and run test automatically
+npm run tdd
+```
+
+## Commit messages
+
+Using Angular's [conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
+
+```text
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+BREAKING CHANGE: Half of features not working anymore
+```
+
+* **feat**: A new feature
+* **fix**: A bug fix
+* **docs**: Documentation only changes
+* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* **refactor**: A code change that neither fixes a bug nor adds a feature
+* **perf**: A code change that improves performance
+* **test**: Adding missing or correcting existing tests
+* **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
+
 ## Changelog
 
-History of all changes in [CHANGELOG.md](CHANGELOG.md)
-
-### 0.6.1 - 21 January 2019
-
-#### Change
-
-* Various UI changes
+See the [releases section](https://github.com/mutant-ws/tape-ui/releases) for details.

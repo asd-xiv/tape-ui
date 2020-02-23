@@ -1,20 +1,20 @@
 {
-  "name": "@mtn-ws/tape-ui",
+  "name": "@mutant-ws/tape-ui",
   "version": "0.6.1",
   "description": "Terminal UI for Tape test runner",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mtn-ws/tape-ui.git"
+    "url": "git+ssh://git@github.com/mutant-ws/tape-ui.git"
   },
   "author": {
     "name": "Andrei Dumitrescu",
     "url": "https://github.com/andreidcm"
   },
   "bugs": {
-    "url": "https://github.com/mtn-ws/tape-ui/issues"
+    "url": "https://github.com/mutant-ws/tape-ui/issues"
   },
-  "homepage": "https://github.com/mtn-ws/tape-ui",
+  "homepage": "https://github.com/mutant-ws/tape-ui",
   "main": "dist/index.js",
   "bin": {
     "tape-ui": "bin/cli.js"
