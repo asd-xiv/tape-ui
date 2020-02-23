@@ -2,7 +2,6 @@
   "presets": [
     "@babel/preset-env",
     "@babel/preset-react",
-    "@babel/preset-flow"
   ],
 
   "plugins": [
@@ -12,16 +11,10 @@
     // is spread out over multiple files.
     "@babel/plugin-transform-runtime",
 
-
     // class static properties
     ["@babel/plugin-proposal-class-properties", {
       "loose" : true
     }],
-
-    // --- Currently crashes parcel. Duplicate plugin.
-    // --- https://github.com/parcel-bundler/parcel/pull/2032
-    // let n = { x, y, ...z };
-    "@babel/plugin-proposal-object-rest-spread",
 
     // var foo = object.foo ?? "default"
     //
