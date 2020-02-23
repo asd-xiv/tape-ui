@@ -1,5 +1,3 @@
-// @flow
-
 export const isRun = {
   style: {
     fg: "black",

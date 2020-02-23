@@ -1,17 +1,16 @@
-// @flow
-
-import * as React from "react"
+import React from "react"
+import PropTypes from "prop-types"
 import {
   pipe,
   max,
   map,
-  findBy,
+  findWith,
   replace,
   hasWith,
   filter,
   contains,
-  countBy,
-} from "@asd14/m"
+  countWith,
+} from "@mutantlove/m"
 
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"
@@ -20,133 +19,129 @@ import { UITitle } from "../ui/title/title"
 import { UIInput } from "../ui/input/input"
 import { UIStatus } from "../ui/status/status"
 
-import type { TestFile, AppState, AppActions } from "./app.container"
-import type { ListItem } from "../ui/list/list__item"
+const AppView = ({
+  name,
+  version,
+  files,
+  fileSelectedPath,
+  filterQuery,
+  runArgs,
+  isDebugVisible,
+  isFilterVisible,
+  onChangeSelected,
+  onRun,
+  onFilterChange,
+  onFilterSubmit,
+  onFilterClose,
+}) => {
+  const filesSelected = findWith({ path: fileSelectedPath })(files) ?? {}
+  const filesFiltered = filter(item => contains(filterQuery)(item.path))(files)
+  const listWidth =
+    pipe(
+      map(item => item.name.length),
+      max
+    )(files) + 6
 
-type Props = {
-  name: string,
-  version: string,
-  store: $Shape<AppState>,
-  actions: AppActions,
-}
-
-class AppView extends React.Component<Props> {
-  /**
-   * Examine this.props and this.state and return a single React element. This
-   * element can be either a representation of a native DOM component, such as
-   * <div />, or another composite component that you've defined yourself.
-   *
-   * @return {React.Node}
-   */
-  render = (): React.Node => {
-    const {
-      name,
-      version,
-      store: {
-        files,
-        fileSelectedPath,
-        filterQuery,
-        runArgs,
-        isDebugVisible,
-        isFilterVisible,
-      },
-      actions: {
-        xHandleChangeSelected,
-        xHandleRun,
-        xHandleFilterChange,
-        xHandleFilterSubmit,
-        xHandleFilterClose,
-      },
-    } = this.props
-
-    const filesSelected: TestFile =
-      findBy({ path: fileSelectedPath })(files) ?? {}
-    const filesFiltered = filter(item => contains(filterQuery)(item.path))(
-      files
-    )
-    const listWidth =
-      pipe(
-        map(item => item.name.length),
-        max
-      )(files) + 6
-
-    return [
+  return (
+    <>
       <UIStatus
-        key="app-status"
         left={0}
         top={0}
-        width={listWidth}
-        total={files.length}
-        fail={countBy({ code: 1 })(files)}
-        run={countBy({ isLoading: true })(files)}
+        width={listWidth + 2}
+        totalCount={files.length}
+        failCount={countWith({ code: 1 })(files)}
+        runningCount={countWith({ isLoading: true })(files)}
         isLoading={hasWith({ isLoading: true })(files)}
-      />,
+      />
+
       <UIList
-        key="app-files-list"
         selectedId={filesSelected.path}
         top={1}
         left={0}
         width={listWidth}
         height="100%-1"
-        items={map(
-          (item: TestFile): ListItem => ({
-            id: item.path,
-            label: replace(filterQuery, `{bold}${filterQuery}{/bold}`)(
-              item.name
-            ),
-            code: item.code,
-            isLoading: item.isLoading,
-          })
-        )(filesFiltered)}
-        onChange={xHandleChangeSelected}
-        onSelect={xHandleRun}
-      />,
-      <UITitle key="app-title" name={name} version={version} />,
+        items={map(item => ({
+          id: item.path,
+          label: replace(filterQuery, `{bold}${filterQuery}{/bold}`)(item.name),
+          code: item.code,
+          isLoading: item.isLoading,
+        }))(filesFiltered)}
+        onChange={onChangeSelected}
+        onSelect={onRun}
+      />
+
+      <line
+        orientation="vertical"
+        top={1}
+        left={listWidth + 1}
+        height="100%-1"
+        width={1}
+      />
+
+      <UITitle name={name} version={version} />
+
       <UIFile
-        key="app-files-selected"
         path={filesSelected.path}
         top={1}
-        left={listWidth - 1}
-        width={`100%-${listWidth}`}
-        height={isDebugVisible ? "70%" : "100%-1"}
+        left={listWidth + 1}
+        width={`100%-${listWidth + 1}`}
+        height={isDebugVisible ? "100%-10" : "100%-1"}
         content={[
           filesSelected.stdout,
           `{red-fg}${filesSelected.stderr}{/}`,
         ].join("\n")}
         code={filesSelected.code}
         isLoading={filesSelected.isLoading}
-      />,
-      isDebugVisible ? (
+      />
+
+      {isDebugVisible ? (
         <UIDebug
-          key="app-details"
-          label="Details"
+          label="Debug"
           value={{
             Node: process.execPath,
             Path: filesSelected.path,
             Args: runArgs,
             "Exit code": filesSelected.code,
           }}
-          top="70%"
-          left={listWidth}
-          width={`100%-${listWidth}`}
-          height="30%"
+          top="100%-10"
+          left={listWidth + 1}
+          width={`100%-${listWidth + 1}`}
+          height={10}
         />
-      ) : null,
-      isFilterVisible ? (
+      ) : null}
+
+      {isFilterVisible ? (
         <UIInput
-          key="files-selected-filter-input"
           top="100%-1"
           width="30%"
           left="0"
           label="Filter:"
           value={filterQuery}
-          onChange={xHandleFilterChange}
-          onSubmit={xHandleFilterSubmit}
-          onCancel={xHandleFilterClose}
+          onChange={onFilterChange}
+          onSubmit={onFilterSubmit}
+          onCancel={onFilterClose}
         />
-      ) : null,
-    ]
-  }
+      ) : null}
+    </>
+  )
+}
+
+AppView.propTypes = {
+  name: PropTypes.string.isRequired,
+  version: PropTypes.string.isRequired,
+
+  files: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  fileSelectedPath: PropTypes.string.isRequired,
+  filterQuery: PropTypes.string.isRequired,
+  runArgs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isDebugVisible: PropTypes.bool.isRequired,
+  isFilterVisible: PropTypes.bool.isRequired,
+
+  onChangeSelected: PropTypes.func.isRequired,
+  onRun: PropTypes.func.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onFilterSubmit: PropTypes.func.isRequired,
+  onFilterClose: PropTypes.func.isRequired,
 }
 
 export { AppView }

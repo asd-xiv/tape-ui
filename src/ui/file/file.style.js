@@ -1,10 +1,8 @@
-// @flow
-
 export const file = {
   keys: true,
+  scrollable: true,
   vi: true,
   tags: true,
-  scrollable: true,
   padding: {
     top: 0,
     left: 1,
@@ -25,9 +23,9 @@ export const file = {
       border: {
         fg: "white",
       },
-      scrollbar: {
-        fg: "blue",
-      },
+      // scrollbar: {
+      //   fg: "blue",
+      // },
     },
   },
 }

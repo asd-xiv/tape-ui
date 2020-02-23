@@ -1,5 +1,3 @@
-// @flow
-
 export const item = {
   left: 0,
   height: 1,
@@ -20,6 +18,5 @@ export const item = {
 export const selected = {
   style: {
     fg: "white",
-    bold: true,
   },
 }

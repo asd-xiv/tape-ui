@@ -1,49 +1,32 @@
-// @flow
-
-import * as React from "react"
+import React from "react"
+import PropTypes from "prop-types"
 
 import * as style from "./file.style"
 
-type Props = {|
-  path: string,
-  top: number | string,
-  left: number,
-  width: number | string,
-  height: number | string,
-  content: string,
-  code: number,
-  isLoading: boolean,
-|}
+const UIFile = ({ top, left, width, height, content }) => {
+  return (
+    <log
+      class={style.file}
+      top={top}
+      left={left}
+      width={width}
+      height={height}
+      scrollOnInput={true}
+      content={content}
+    />
+  )
+}
 
-class UIFile extends React.PureComponent<Props> {
-  static defaultProps = {
-    content: "",
-    code: NaN,
-    isLoading: false,
-  }
+UIFile.propTypes = {
+  top: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  left: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  content: PropTypes.string,
+}
 
-  /**
-   * Examine this.props and this.state and return a single React element. This
-   * element can be either a representation of a native DOM component, such as
-   * <div />, or another composite component that you've defined yourself.
-   *
-   * @return {React.Node}
-   */
-  render = (): React.Node => {
-    const { top, left, width, height, content } = this.props
-
-    return (
-      <log
-        class={style.file}
-        top={top}
-        left={left + 1}
-        width={width}
-        height={height}
-        scrollOnInput={true}
-        content={content}
-      />
-    )
-  }
+UIFile.defaultProps = {
+  content: "",
 }
 
 export { UIFile }

@@ -1,47 +1,33 @@
-// @flow
+import React, { useState, useEffect } from "react"
+import PropTypes from "prop-types"
 
-import * as React from "react"
+const UITitle = ({ name, version }) => {
+  const [memory, setMemory] = useState(process.memoryUsage().rss)
 
-type PropsType = {|
-  name: string,
-  version: string,
-|}
+  useEffect(() => {
+    const memoryTimer = setInterval(() => {
+      setMemory(process.memoryUsage().rss)
+    }, 1000)
 
-type StateType = {
-  memory: number,
+    return () => clearInterval(memoryTimer)
+  }, [])
+
+  return (
+    <box
+      tags={true}
+      top="0"
+      right="0"
+      width="50%"
+      content={`{right}${name} v${version} | ${`${Math.round(
+        memory / 1048576
+      )}MB`}{/right}`}
+    />
+  )
 }
 
-class UITitle extends React.PureComponent<PropsType, StateType> {
-  state = {
-    memory: process.memoryUsage().rss,
-  }
-
-  componentWillUnmount = () => {
-    clearInterval(this.memoryTimer)
-  }
-
-  render = (): React.Node => {
-    const { name, version } = this.props
-    const { memory } = this.state
-
-    return (
-      <box
-        tags={true}
-        top="0"
-        right="0"
-        width="50%"
-        content={`{right}${name} v${version} | ${`${Math.round(
-          memory / 1048576
-        )}MB`}{/right}`}
-      />
-    )
-  }
-
-  memoryTimer = setInterval(() => {
-    this.setState({
-      memory: process.memoryUsage().rss,
-    })
-  }, 1000)
+UITitle.propTypes = {
+  name: PropTypes.string.isRequired,
+  version: PropTypes.string.isRequired,
 }
 
 export { UITitle }

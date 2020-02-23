@@ -1,5 +1,3 @@
-// @flow
-
 export const debug = {
   keys: true,
   vi: true,

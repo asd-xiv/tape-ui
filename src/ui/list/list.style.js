@@ -1,10 +1,8 @@
-// @flow
-
 export const list = {
   keyable: true,
+  scrollable: true,
   vi: true,
   tags: true,
-  scrollable: true,
   padding: {
     top: 0,
     left: 0,
@@ -16,16 +14,16 @@ export const list = {
     inverse: true,
     fg: "white",
   },
-  border: {
-    fg: -1,
-  },
+  // border: {
+  // fg: -1,
+  // },
   style: {
     focus: {
       border: {
-        fg: "white",
+        // fg: "white",
       },
       scrollbar: {
-        fg: "blue",
+        // fg: "blue",
       },
     },
   },

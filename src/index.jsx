@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import neoBlessed from "neo-blessed"
 import { join } from "path"
 import { createBlessedRenderer } from "react-blessed"

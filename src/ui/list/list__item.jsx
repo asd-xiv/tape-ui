@@ -1,61 +1,41 @@
-// @flow
-
-import * as React from "react"
+import React from "react"
+import PropTypes from "prop-types"
 import figures from "figures"
 
 import * as style from "./list__item.style"
 
-type ListItem = {|
-  id: string,
-  label: string,
-  code?: number,
-  isLoading: boolean,
-|}
+const UIListItem = ({ label, code, top, isSelected, isLoading }) => {
+  const color = isLoading
+    ? "{blue-fg}"
+    : code === -1
+    ? "{white-fg}"
+    : code === 0
+    ? "{green-fg}"
+    : "{red-fg}"
+  const underline = isSelected ? "{underline}" : ""
 
-type Props = {|
-  ...ListItem,
-  top: number | string,
-  isSelected?: boolean,
-|}
-
-class UIListItem extends React.PureComponent<Props> {
-  static defaultProps = {
-    code: -1,
-    isSelected: false,
-    isLoading: false,
-  }
-
-  /**
-   * Examine this.props and this.state and return a single React element. This
-   * element can be either a representation of a native DOM component, such as
-   * <div />, or another composite component that you've defined yourself.
-   *
-   * @return {React.Node}
-   */
-  render = (): React.Node => {
-    const { label, code, top, isSelected, isLoading } = this.props
-
-    const color = isLoading
-      ? "{blue-fg}"
-      : code === -1
-      ? "{white-fg}"
-      : code === 0
-      ? "{green-fg}"
-      : "{red-fg}"
-    const underline = isSelected ? "{underline}" : ""
-
-    return (
-      <box
-        class={[style.item, isSelected && style.selected]}
-        top={top}
-        keyable={false}
-        content={`${color}${
-          figures.squareSmallFilled
-        }{/} ${underline}${label}{/}`}
-      />
-    )
-  }
+  return (
+    <box
+      class={[style.item, isSelected && style.selected]}
+      top={top}
+      keyable={false}
+      content={`${color}{bold}${figures.squareSmallFilled}{/} ${underline}${label}{/}`}
+    />
+  )
 }
 
-export type { ListItem }
+UIListItem.propTypes = {
+  label: PropTypes.string.isRequired,
+  code: PropTypes.number,
+  top: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool,
+  isLoading: PropTypes.bool,
+}
+
+UIListItem.defaultProps = {
+  code: -1,
+  isSelected: false,
+  isLoading: false,
+}
+
 export { UIListItem }
