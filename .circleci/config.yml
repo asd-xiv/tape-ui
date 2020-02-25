@@ -1,0 +1,79 @@
+version: 2.1
+
+orbs:
+  node: circleci/node:lts
+
+#
+# YAML variable templates
+#
+job_defaults: &job_defaults
+  working_directory: ~/tape-ui-repo
+
+job_filter: &job_filter
+  filters:
+    branches:
+      only:
+        - master
+
+jobs:
+  setup:
+    <<: *job_defaults
+
+    steps:
+      - checkout
+
+      - run:
+          name: "tape-ui: Install npm packages"
+          command: "npm run setup"
+
+      - run:
+          name: "tape-ui: Babel compile"
+          command: "npm run build:ci"
+
+      - save_cache:
+          paths:
+            - node_modules
+            - dist
+          key: tape-ui-{{ .Branch }}-{{ .Revision }}
+
+  test:
+    <<: *job_defaults
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - m-{{ .Branch }}-{{ .Revision }}
+
+      - run:
+          name: "tape-ui: Run linter"
+          command: "npm run lint"
+
+  publish:
+    <<: *job_defaults
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - tape-ui-{{ .Branch }}-{{ .Revision }}
+
+      - run:
+          name: "tape-ui: Release to npm with semantic-release"
+          command: "npx semantic-release"
+
+workflows:
+  npm_publish:
+    jobs:
+      - setup:
+          <<: *job_filter
+      - test:
+          <<: *job_filter
+          requires:
+            - setup
+      - publish:
+          <<: *job_filter
+          requires:
+            - test
