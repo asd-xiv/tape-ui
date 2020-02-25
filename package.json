@@ -1,6 +1,6 @@
 {
   "name": "@mutant-ws/tape-ui",
-  "version": "0.6.1",
+  "version": "0.0.1",
   "description": "Terminal UI for Tape test runner",
   "license": "BSD-3-Clause",
   "repository": {
