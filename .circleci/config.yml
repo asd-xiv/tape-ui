@@ -29,7 +29,16 @@ jobs:
       - save_cache:
           paths:
             - node_modules
+            - bin
             - dist
+            - src
+            - .git
+            - .gitignore
+            - .babelrc
+            - .eslintrc
+            - .prettierrc
+            - package.json
+            - package-lock.json
           key: tape-ui-{{ .Branch }}-{{ .Revision }}
 
   test:
@@ -40,7 +49,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - m-{{ .Branch }}-{{ .Revision }}
+            - tape-ui-{{ .Branch }}-{{ .Revision }}
 
       - run:
           name: "tape-ui: Run linter"
