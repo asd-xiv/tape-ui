@@ -24,7 +24,7 @@ jobs:
 
       - run:
           name: "tape-ui: Babel compile"
-          command: "npm run build:ci"
+          command: "npm run build"
 
       - save_cache:
           paths:
