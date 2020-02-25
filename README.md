@@ -1,7 +1,7 @@
 <!-- markdownlint-disable first-line-h1 line-length -->
 
-[![CircleCI](https://circleci.com/gh/mutant-ws/tape-ui.svg?style=svg)](https://circleci.com/gh/mutant-ws/tape-ui)
-[![npm package version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
+[![CircleCI](https://circleci.com/gh/mutant-ws/tape-ui/tree/master.svg?style=svg)](https://circleci.com/gh/mutant-ws/tape-ui/tree/master)
+[![npm version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
 
 # WIP: Tape UI
 
