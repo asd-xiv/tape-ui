@@ -1,6 +1,9 @@
-<!-- markdownlint-disable line-length -->
+<!-- markdownlint-disable first-line-h1 line-length -->
 
-# WIP: Tape UI [![npm package version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
+[![CircleCI](https://circleci.com/gh/mutant-ws/tape-ui.svg?style=svg)](https://circleci.com/gh/mutant-ws/tape-ui)
+[![npm package version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
+
+# WIP: Tape UI
 
 > Terminal UI for [Tape](https://github.com/substack/tape) test runner
 
