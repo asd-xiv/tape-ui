@@ -1,12 +1,8 @@
 version: 2.1
 
-orbs:
-  node: circleci/node:lts
-
-#
-# YAML variable templates
-#
 job_defaults: &job_defaults
+  docker:
+    - image: "circleci/node:lts"
   working_directory: ~/tape-ui-repo
 
 job_filter: &job_filter
