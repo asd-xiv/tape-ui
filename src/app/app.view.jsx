@@ -10,7 +10,7 @@ import {
   filter,
   contains,
   countWith,
-} from "@mutantlove/m"
+} from "@mutant-ws/m"
 
 import { UIFile } from "../ui/file/file"
 import { UIList } from "../ui/list/list"

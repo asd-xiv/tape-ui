@@ -11,7 +11,7 @@ import {
   tail,
   isEmpty,
   is,
-} from "@mutantlove/m"
+} from "@mutant-ws/m"
 
 import { UIListItem } from "./list__item"
 

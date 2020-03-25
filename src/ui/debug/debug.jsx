@@ -2,7 +2,7 @@
 
 import React from "react"
 import PropTypes from "prop-types"
-import { map, pipe, join } from "@mutantlove/m"
+import { map, pipe, join } from "@mutant-ws/m"
 
 import * as style from "./debug.style"
 

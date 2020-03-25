@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import glob from "glob"
 import { fork } from "child_process"
 import { basename } from "path"
-import { has, forEach, reduce, map } from "@mutantlove/m"
+import { has, forEach, reduce, map } from "@mutant-ws/m"
 
 import { AppView } from "./app.view"
 

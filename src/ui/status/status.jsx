@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import figures from "figures"
-import { is } from "@mutantlove/m"
+import { is } from "@mutant-ws/m"
 
 import * as style from "./status.style"
 

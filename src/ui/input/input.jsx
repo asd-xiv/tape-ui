@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import PropTypes from "prop-types"
-import { isEmpty, is } from "@mutantlove/m"
+import { isEmpty, is } from "@mutant-ws/m"
 
 import { labelStyle, inputStyle, wrapperStyle } from "./input.style"
 
