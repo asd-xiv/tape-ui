@@ -2,7 +2,7 @@
   "parser": "babel-eslint",
   "root": true,
   "extends": [
-    "@mutantlove/eslint-config/targets/react",
+    "@mutant-ws/eslint-config/targets/react",
   ],
   "env": {
     "browser": true,
