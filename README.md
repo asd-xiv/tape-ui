@@ -1,7 +1,7 @@
 <!-- markdownlint-disable first-line-h1 line-length -->
 
-[![CircleCI](https://circleci.com/gh/mutant-ws/tape-ui/tree/master.svg?style=svg)](https://circleci.com/gh/mutant-ws/tape-ui/tree/master)
-[![npm version](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui.svg)](https://badge.fury.io/js/%40mutant-ws%2Ftape-ui)
+[![CircleCI](https://circleci.com/gh/andreidmt/tape-ui/tree/master.svg?style=svg)](https://circleci.com/gh/andreidmt/tape-ui/tree/master)
+[![npm version](https://badge.fury.io/js/tape-ui.svg)](https://www.npmjs.com/package/tape-ui)
 
 # WIP: Tape UI
 
@@ -21,7 +21,9 @@
 
 ## Features
 
-* [ ] Run only relevant tests based on file changes
+* [x] Selectively run test files
+* [ ] Run relevant test files based on file changes
+* [ ] Test coverage
 
 ## Install
 
