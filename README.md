@@ -21,8 +21,8 @@
 
 ## Features
 
-* [x] Selectively run test files
-* [ ] Run relevant test files based on file changes
+* [x] Selectively run tests
+* [ ] Run relevant tests based on file changes
 * [ ] Test coverage
 
 ## Install
