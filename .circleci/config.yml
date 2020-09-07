@@ -2,7 +2,7 @@ version: 2.1
 
 job_defaults: &job_defaults
   docker:
-    - image: "circleci/node:lts"
+    - image: "circleci/node:12"
   working_directory: ~/tape-ui-repo
 
 job_filter: &job_filter
@@ -22,19 +22,13 @@ jobs:
           name: "tape-ui: Install npm packages"
           command: "npm run setup"
 
-      - run:
-          name: "tape-ui: Babel compile"
-          command: "npm run build"
-
       - save_cache:
           paths:
             - node_modules
             - bin
-            - dist
             - src
             - .git
             - .gitignore
-            - .babelrc
             - .eslintrc
             - .prettierrc
             - package.json
