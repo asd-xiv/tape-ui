@@ -5,9 +5,7 @@
 
 # WIP: Tape UI
 
-> Terminal UI for [Tape](https://github.com/substack/tape) test runner
-
-![Tape UI](docs/screenshot.png)
+![Tape UI](screenshot.png)
 
 ---
 
@@ -17,21 +15,18 @@
 * [Install](#install)
 * [Use](#use)
 * [Develop](#develop)
-* [Commit messages](#commit-messages)
 * [Changelog](#changelog)
 
 <!-- vim-markdown-toc -->
 
 ## Features
 
-* [ ] Terminal UI with VIM shortcuts - [neo-blessed](https://github.com/embarklabs/neo-blessed) and [react-blessed](https://github.com/Yomguithereal/react-blessed)
-* [ ] Test files run in separate workers
-* [ ] Auto run only relevant tests based on file changes
+* [ ] Run only relevant tests based on file changes
 
 ## Install
 
 ```bash
-npm i --save-exact @mutant-ws/tape-ui
+npm install tape-ui
 ```
 
 ## Use
@@ -41,7 +36,7 @@ Add script in `package.json`
 ```json
 {
   "scripts": {
-    "tdd": "tape-ui -r @babel/register -p src -g '**/*.test.js'",
+    "tdd": "tape-ui -r @babel/register 'src/**/*.test.js'",
   }
 }
 ```
@@ -49,7 +44,7 @@ Add script in `package.json`
 ## Develop
 
 ```bash
-git clone git@github.com:mutant-ws/tape-ui.git && \
+git clone git@github.com:andreidmt/tape-ui.git && \
   cd tape-ui && \
   npm run setup
 
@@ -60,28 +55,6 @@ npm test
 npm run tdd
 ```
 
-## Commit messages
-
-Using Angular's [conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
-
-```text
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
-BREAKING CHANGE: Half of features not working anymore
-```
-
-* **feat**: A new feature
-* **fix**: A bug fix
-* **docs**: Documentation only changes
-* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-* **refactor**: A code change that neither fixes a bug nor adds a feature
-* **perf**: A code change that improves performance
-* **test**: Adding missing or correcting existing tests
-* **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
-
 ## Changelog
 
-See the [releases section](https://github.com/mutant-ws/tape-ui/releases) for details.
+See the [releases section](https://github.com/andreidmt/tape-ui/releases) for details.

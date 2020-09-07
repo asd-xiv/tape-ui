@@ -3,13 +3,20 @@
  *
  * The overhead of starting >100 test files using process.spawn inside the
  * main process is not negligible and will block the UI.
- * Using a secondary acid long-running process will fully eliminate that overhead from
- * the main app.
+ * Using a secondary long-running process will reduce that overhead from the
+ * main app.
  */
 
-import { spawn } from "child_process"
+const { spawn } = require("child_process")
+const { logger } = require("./logger")
 
 const runOne = ({ path, runArgs }) => {
+  logger.info({
+    date: new Date(),
+    path,
+    runArgs,
+  })
+
   const child = spawn("node", [...runArgs, path], {
     detached: false,
     cwd: process.cwd(),

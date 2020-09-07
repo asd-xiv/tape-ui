@@ -1,22 +1,17 @@
 {
-  "parser": "babel-eslint",
   "root": true,
   "extends": [
-    "@mutant-ws/eslint-config/targets/react",
+    "./node_modules/eslint-config.xyz/targets/node",
   ],
+  "parserOptions": {
+    "ecmaVersion": 9
+  },
   "env": {
-    "browser": true,
-    "es6": true,
     "node": true
   },
   "rules": {
-    "react/no-unknown-property": ["error", { ignore: ["class"] }]
   },
   "settings": {
-    "react": {
-      "version": "detect",
-    },
-
     // Recommended if you use eslint_d
     "import/cache": {
       "lifetime": 5,

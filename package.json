@@ -1,24 +1,8 @@
 {
-  "name": "@mutant-ws/tape-ui",
+  "name": "tape-ui",
   "version": "0.0.1",
-  "description": "Terminal UI for Tape test runner",
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/mutant-ws/tape-ui.git"
-  },
-  "author": {
-    "name": "Andrei Dumitrescu",
-    "url": "https://github.com/andrei-dumitrescu"
-  },
-  "bugs": {
-    "url": "https://github.com/mutant-ws/tape-ui/issues"
-  },
-  "homepage": "https://github.com/mutant-ws/tape-ui",
-  "main": "dist/index.js",
-  "bin": {
-    "tape-ui": "bin/cli.js"
-  },
+  "description": "Terminal UI test runner for Tape",
+  "license": "MIT",
   "keywords": [
     "terminal",
     "cli",
@@ -27,66 +11,68 @@
     "tap",
     "blessed"
   ],
+  "homepage": "https://github.com/andreidmt/tape-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/andreidmt/tape-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreidmt/tape-ui/issues"
+  },
+  "author": {
+    "name": "Andrei Dumitrescu",
+    "url": "https://github.com/andreidmt"
+  },
+  "main": "src/index.js",
+  "bin": {
+    "tape-ui": "bin/cli.js"
+  },
   "scripts": {
     "----UTIL": "",
     "setup": "rm -rf dist/* && rm -rf ./node_modules && npm i && npm audit fix",
     "setup:ci": "npm ci && npm audit fix",
     "update": "npm-check --update",
-    "----DEV--------------------------------------": "",
-    "start:dev": "nodemon -e js,jsx --watch src --exec \"npm run build\"",
-    "start": "npm run build && node bin/cli.js",
-    "----BUILD------------------------------------": "",
-    "build": "rm -rf dist/* && babel src --out-dir dist",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm audit fix && npm test && npm run lint",
-    "----LINTING----------------------------------": "",
+    "----DEV": "",
+    "----BUILD": "",
+    "prepublishOnly": "npm test && npm run lint",
+    "----LINTING": "",
     "lint:md": "markdownlint *.md",
     "lint:js": "eslint --ext .jsx,.js src/",
     "lint": "npm run lint:md && npm run lint:js",
-    "----TESTS------------------------------------": "",
+    "----TESTS": "",
     "test": "tape src/**/*.test.js",
     "tdd": "nodemon --watch src --exec \"npm test\""
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
-    "@mutant-ws/m": "^1.10.0",
     "figures": "^3.2.0",
     "glob": "^7.1.6",
+    "m.xyz": "^2.12.1",
     "minimist": "^1.2.5",
     "neo-blessed": "^0.2.0",
-    "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-blessed": "^0.6.2",
-    "tape": "^4.13.2"
+    "tape": "^5.0.1",
+    "winston": "^3.3.3"
   },
   "peerDependencies": {
-    "tape": "^4.13.0"
+    "tape": "^5.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
-    "@babel/preset-react": "^7.9.4",
-    "@babel/register": "^7.9.0",
-    "@mutant-ws/eslint-config": "^5.9.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-compat": "^3.5.1",
-    "eslint-plugin-html": "^6.0.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-json": "^2.1.1",
+    "eslint": "^7.8.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config.xyz": "^5.13.0",
+    "eslint-plugin-compat": "^3.8.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-no-inferred-method-name": "^2.0.0",
-    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.19.0",
-    "eslint-plugin-react-hooks": "^2.5.1",
-    "eslint-plugin-unicorn": "^17.2.0",
-    "markdownlint-cli": "^0.22.0",
-    "nodemon": "^2.0.2",
+    "eslint-plugin-unicorn": "^21.0.0",
+    "markdownlint-cli": "^0.23.2",
+    "nodemon": "^2.0.4",
     "npm-check": "^5.9.2",
-    "prettier": "^2.0.2",
-    "semantic-release": "^17.0.4"
+    "prettier": "^2.1.1",
+    "semantic-release": "^17.1.1"
+  },
+  "engines": {
+    "node": ">=12"
   }
 }
