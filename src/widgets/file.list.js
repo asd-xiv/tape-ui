@@ -3,6 +3,7 @@ const blessed = require("neo-blessed")
 const glob = require("glob")
 const {
   count,
+  read,
   max,
   flatten,
   distinct,
@@ -12,13 +13,17 @@ const {
   map,
   pipe,
   converge,
-  findIndex,
+  findIndexWith,
   contains,
   replace,
   isEmpty,
 } = require("m.xyz")
 
 module.exports = ({ parent, fileGlob }) => {
+  /**
+   * State
+   */
+
   const filePaths = pipe(
     map(item =>
       glob.sync(item, {
@@ -32,15 +37,23 @@ module.exports = ({ parent, fileGlob }) => {
   const pathNameMap = reduce(
     (acc, item) => ({
       ...acc,
-      [item]: pipe(split(sep), last)(item),
+      [item]: {
+        name: pipe(split(sep), last)(item),
+        isLoading: false,
+        code: null,
+      },
     }),
     {},
     filePaths
   )
 
-  const listWidth = pipe(Object.values, map(count), max)(pathNameMap) + 6
+  const listWidth =
+    pipe(Object.values, map([read("name"), count]), max)(pathNameMap) + 6
 
-  // Separate title element since we cant have only borderTop
+  /**
+   * Render
+   */
+
   blessed.box({
     parent,
     tags: true,
@@ -65,6 +78,11 @@ module.exports = ({ parent, fileGlob }) => {
 
   const list = blessed.list({
     parent,
+    items: pipe(
+      Object.values,
+      map([read("name"), source => `{gray-fg}■{/gray-fg} ${source}`])
+    )(pathNameMap),
+
     tags: true,
     keys: true,
     vi: true,
@@ -115,13 +133,6 @@ module.exports = ({ parent, fileGlob }) => {
     },
   })
 
-  list.setItems(
-    pipe(
-      Object.values,
-      map(item => `{gray-fg}■{/gray-fg} ${item}`)
-    )(pathNameMap)
-  )
-
   list.on("select", (el, selected) => {
     const path = filePaths[selected]
     const name = pathNameMap[path]
@@ -129,25 +140,28 @@ module.exports = ({ parent, fileGlob }) => {
     list.emit("run", name, path)
   })
 
-  list.setHighlight = value => {
+  list.setHighlight = query => {
     pipe(
       Object.values,
       converge(
         (firstMatchIndex, highlightedItems) => {
-          if (!isEmpty(value)) {
+          if (!isEmpty(query)) {
             list.select(firstMatchIndex)
           }
           list.setItems(highlightedItems)
         },
         [
-          findIndex(contains(value)),
-          map(
-            item =>
+          findIndexWith({
+            name: contains(query),
+          }),
+          map([
+            read("name"),
+            source =>
               `{gray-fg}■{/gray-fg} ${replace(
-                value,
-                `{underline}${value}{/underline}`
-              )(item)}`
-          ),
+                query,
+                `{underline}${query}{/underline}`
+              )(source)}`,
+          ]),
         ]
       )
     )(pathNameMap)

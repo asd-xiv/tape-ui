@@ -57,12 +57,12 @@ module.exports = ({ requireModules, fileGlob }) => {
     width: `100%-${list.width}`,
   })
 
-  list.on("run", (name, path) => {
+  list.on("run", (file, path) => {
     // box.setLabel(` ${name} `)
-    box.setContent(JSON.stringify({ name, path }, 2, 2))
+    box.setContent(JSON.stringify({ file, path }, 2, 2))
 
     executor.on("message", ({ stdout, stderr }) => {
-      box.setContent(stdout + stderr)
+      box.setContent(`${box.getContent()}\n${stdout}${stderr}`)
 
       screen.render()
     })

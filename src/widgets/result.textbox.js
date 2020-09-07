@@ -31,20 +31,30 @@ module.exports = ({ parent, label, width }) => {
     keys: true,
     vi: true,
     mouse: true,
+    scrollable: true,
 
-    padding: 0,
     top: 2,
     right: 0,
     width,
-    height: "100%-1",
+    height: "100%-3",
+
+    scrollbar: {
+      style: {
+        bg: "white",
+      },
+    },
 
     style: {
       border: {
         fg: "white",
       },
+
       focus: {
         border: {
           fg: "blue",
+        },
+        scrollbar: {
+          bg: "blue",
         },
       },
     },
