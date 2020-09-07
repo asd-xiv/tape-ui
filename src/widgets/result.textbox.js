@@ -36,7 +36,7 @@ module.exports = ({ parent, label, width }) => {
     top: 2,
     right: 0,
     width,
-    height: "50%",
+    height: "100%-1",
 
     style: {
       border: {

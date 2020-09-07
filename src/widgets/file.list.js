@@ -38,7 +38,7 @@ module.exports = ({ parent, fileGlob }) => {
     filePaths
   )
 
-  const listWidth = pipe(Object.values, map(count), max)(pathNameMap) + 8
+  const listWidth = pipe(Object.values, map(count), max)(pathNameMap) + 6
 
   // Separate title element since we cant have only borderTop
   blessed.box({
@@ -126,7 +126,7 @@ module.exports = ({ parent, fileGlob }) => {
     const path = filePaths[selected]
     const name = pathNameMap[path]
 
-    list.emit("mark", name, path)
+    list.emit("run", name, path)
   })
 
   list.setHighlight = value => {

@@ -54,10 +54,10 @@ module.exports = ({ requireModules, fileGlob }) => {
   const box = resultTextbox({
     parent: screen,
     label: `${projectPkg.name} v${projectPkg.version}`,
-    width: `100%-${list.width - 1}`,
+    width: `100%-${list.width}`,
   })
 
-  list.on("mark", (name, path) => {
+  list.on("run", (name, path) => {
     // box.setLabel(` ${name} `)
     box.setContent(JSON.stringify({ name, path }, 2, 2))
 
