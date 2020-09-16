@@ -38,8 +38,8 @@ const runOne = ({ path, runArgs }) => {
     process.send({
       path,
       code,
-      stdout: stdout.join("\n"),
-      stderr: stderr.join("\n"),
+      stdout: stdout.join(""),
+      stderr: stderr.join(""),
     })
   })
 }
