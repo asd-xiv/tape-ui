@@ -12,7 +12,7 @@ const {
 const { loaderUI } = require("../ui.loader/loader")
 
 const filesUI = ({ parent, onRun, onChange }) => {
-  const [, renderLabelUI] = loaderUI({
+  const [, renderLoaderUI] = loaderUI({
     parent,
     top: 0,
     left: 0,
@@ -42,7 +42,7 @@ const filesUI = ({ parent, onRun, onChange }) => {
     },
     top: 2,
     left: 0,
-    height: "100%-3",
+    height: "100%-4",
 
     scrollbar: {
       style: {
@@ -74,8 +74,8 @@ const filesUI = ({ parent, onRun, onChange }) => {
     onChange(read([list.selected, "id"], null)(list._.items), list.selected)
   })
 
-  list.on("select", (item, index) => {
-    onRun(read([index, "id"], null)(list._.items), index)
+  list.key("r", () => {
+    onRun(read([list.selected, "id"], null)(list._.items), list.selected)
   })
 
   list.on("element click", () => {
@@ -92,24 +92,23 @@ const filesUI = ({ parent, onRun, onChange }) => {
 
   return [
     list,
+
     ({ items, highlight, width }) => {
-      renderLabelUI({
+      renderLoaderUI({
         content: `${items.length} test files`,
         width,
         isLoading: hasWith({ isRunning: true }, items),
       })
 
-      borderTopLine.position.width = width
-
-      list.position.width = width
+      borderTopLine.width = width
+      list.width = width
 
       /*
-       * Similar to:
-       *
        * useEffect(() => {
        *   ...
        * }, [items, highlight])
        */
+
       if (!isDeepEqual(items, list._.items) || highlight !== list._.highlight) {
         list.setItems(
           map(({ name, code, isRunning }) => {
@@ -130,12 +129,13 @@ const filesUI = ({ parent, onRun, onChange }) => {
         )
       }
 
-      /**
-       * Persist state data
+      /*
+       * Local props, acts like prevProps
        */
 
       list._.items = items
       list._.highlight = highlight
+      list._.width = width
     },
   ]
 }

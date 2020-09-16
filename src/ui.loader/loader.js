@@ -24,23 +24,31 @@ const loaderUI = ({ parent, top, left, height }) => {
       labelBox.setContent(
         isLoading ? `${asciiFrames[spinnerFrame]} ${content}` : `  ${content}`
       )
-      labelBox.position.width = width
+      labelBox.width = width
 
-      if (isLoading && !is(spinnerInterval)) {
-        spinnerInterval = setInterval(() => {
-          spinnerFrame = (spinnerFrame + 1) % asciiFrames.length
+      /*
+       * useEffect(() => {
+       *   ...
+       * }, [isLoading])
+       */
 
-          labelBox.setContent(`${asciiFrames[spinnerFrame]} ${content}`)
-          labelBox.screen.render()
-        }, 70)
+      if (isLoading !== labelBox._.isLoading) {
+        if (isLoading && !is(spinnerInterval)) {
+          spinnerInterval = setInterval(() => {
+            spinnerFrame = (spinnerFrame + 1) % asciiFrames.length
+
+            labelBox.setContent(`${asciiFrames[spinnerFrame]} ${content}`)
+            labelBox.screen.render()
+          }, 70)
+        }
+
+        if (!isLoading && is(spinnerInterval)) {
+          spinnerInterval = clearInterval(spinnerInterval)
+        }
       }
 
-      if (!isLoading && is(spinnerInterval)) {
-        spinnerInterval = clearInterval(spinnerInterval)
-      }
-
-      /**
-       * Persist state data
+      /*
+       * Local props, acts like prevProps
        */
 
       labelBox._.content = content
