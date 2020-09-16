@@ -13,9 +13,6 @@ const commandUI = ({
 }) => {
   const label = blessed.box({
     parent,
-    style: {
-      bg: "gray",
-    },
     content: "/",
     left,
     top,
@@ -27,9 +24,6 @@ const commandUI = ({
     keys: true,
     vi: true,
     mouse: true,
-    style: {
-      bg: "gray",
-    },
     width,
     height,
     top,
@@ -46,7 +40,11 @@ const commandUI = ({
     }
 
     if (key.full === "backspace") {
-      onChange(value.substr(0, value.length - 1))
+      if (value === "") {
+        onCancel()
+      } else {
+        onChange(value.substr(0, value.length - 1))
+      }
     }
 
     if (key.full === "escape") {
@@ -61,30 +59,27 @@ const commandUI = ({
   return [
     input,
     ({ value, isVisible }) => {
-      if (isVisible) {
-        label.show()
-        input.show()
-      } else {
-        label.hide()
-        input.hide()
-      }
-
       input.setContent(value)
 
       /*
-       * Similar to:
-       *
        * useEffect(() => {
-       *   if (isVisible === true) {}
+       *   ...
        * }, [isVisible])
        */
 
-      if (isVisible !== input._.isVisible && isVisible === true) {
-        input.focus()
+      if (isVisible !== input._.isVisible) {
+        if (isVisible === true) {
+          label.show()
+          input.show()
+          input.focus()
+        } else {
+          label.hide()
+          input.hide()
+        }
       }
 
-      /**
-       * Persist state data
+      /*
+       * Local props, acts like prevProps
        */
 
       input._.value = value
