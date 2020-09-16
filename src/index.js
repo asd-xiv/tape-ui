@@ -1,11 +1,25 @@
 const blessed = require("neo-blessed")
-const { converge, reduce, read, pipe, map, count, max } = require("m.xyz")
+const {
+  converge,
+  reduce,
+  read,
+  pipe,
+  map,
+  count,
+  max,
+  push,
+  contains,
+  filterWith,
+  forEach,
+} = require("m.xyz")
 const { fork } = require("child_process")
 
 const projectPkg = require(`${process.cwd()}/package.json`)
 const { filesUI } = require("./ui.files/files")
 const { resultUI } = require("./ui.result/result")
 const { commandUI } = require("./ui.cli/cli")
+const { tabsUI } = require("./ui.tabs/tabs")
+const { helpUI } = require("./ui.help/help")
 
 const { FileList } = require("./ui.files/files.list")
 const { store } = require("./index.state")
@@ -44,10 +58,10 @@ module.exports = ({ requireModules, fileGlob }) => {
     autoPadding: true,
 
     // Whether the focused element grabs all keypresses
-    grabKeys: true,
+    grabKeys: false,
 
     // Prevent keypresses from being received by any element
-    // lockKeys: true,
+    lockKeys: true,
 
     // Automatically "dock" borders with other elements instead of overlapping,
     // depending on position
@@ -97,12 +111,24 @@ module.exports = ({ requireModules, fileGlob }) => {
 
   const [resultRef, renderResultUI] = resultUI({
     parent: screen,
+    top: 2,
+  })
+
+  const [, renderTabsUI] = tabsUI({
+    parent: screen,
+    tabs: ["results", "details"],
+    top: 0,
+  })
+
+  const [, renderHelpUI] = helpUI({
+    parent: screen,
+    width: "100%",
+    left: 0,
+    bottom: 0,
   })
 
   /**
-   * Command Line Interface input for:
-   *
-   * - searching & highlighting through files
+   * Command Line Interface input for searching & highlighting through files
    */
 
   const handleCLIHide = () => {
@@ -143,13 +169,6 @@ module.exports = ({ requireModules, fileGlob }) => {
     }
   })
 
-  screen.key("/", () => {
-    store.dispatch({
-      type: "USE-STATE.SET",
-      payload: { id: "isCLIVisible", value: true },
-    })
-  })
-
   screen.key("S-tab", () => {
     screen.focusPrevious()
   })
@@ -158,12 +177,53 @@ module.exports = ({ requireModules, fileGlob }) => {
     screen.focusNext()
   })
 
+  screen.key("1", () => {
+    store.dispatch({
+      type: "USE-STATE.SET",
+      payload: { id: "tabsSelectId", value: "results" },
+    })
+  })
+
+  screen.key("2", () => {
+    store.dispatch({
+      type: "USE-STATE.SET",
+      payload: { id: "tabsSelectId", value: "details" },
+    })
+  })
+
+  screen.key("/", () => {
+    store.dispatch({
+      type: "USE-STATE.SET",
+      payload: { id: "isCLIVisible", value: true },
+    })
+  })
+
+  screen.key("S-r", () => {
+    const { items } = FileList.selector(store.getState())
+
+    // console.log({ items: items() })
+
+    forEach(({ id }) => {
+      executor.send({
+        path: id,
+        runArgs: executorRunArgs,
+      })
+
+      FileList.update(id, {
+        isRunning: true,
+      })
+    })(items())
+  })
+
   /* eslint-disable unicorn/no-process-exit */
   screen.key(["C-c"], () => {
     return process.exit(0)
   })
 
-  // Load all files matching glob
+  /*
+   * Find all files matching glob
+   */
+
   FileList.read(fileGlob)
 
   /*
@@ -171,19 +231,31 @@ module.exports = ({ requireModules, fileGlob }) => {
    */
   store.subscribe(() => {
     const currentState = store.getState()
-    const [cliQuery, fileSelectId, isCLIVisible] = converge(
+    const [fileSelectId, tabsSelectId, cliQuery, isCLIVisible] = converge(
       (...params) => params,
       [
-        read(["USE-STATE", "cliQuery"], ""),
         read(["USE-STATE", "fileSelectId"], null),
+        read(["USE-STATE", "tabsSelectId"], "results"),
+        read(["USE-STATE", "cliQuery"], ""),
         read(["USE-STATE", "isCLIVisible"], false),
       ]
     )(currentState)
-
-    //
     const { items, byId } = FileList.selector(currentState)
-    const files = items()
-    const listWidth = pipe(map([read("name"), count]), max)(files) + 6
+    const { id, name, shouldRunOnChange, stdout } = byId(fileSelectId, {})
+    const files = filterWith({ name: contains(cliQuery) })(items())
+    const listWidth = pipe(
+      map([read("name"), count]),
+      push(20),
+      max,
+      source => source + 5
+    )(files)
+
+    renderTabsUI({
+      label: name,
+      left: listWidth,
+      width: `100%-${listWidth}`,
+      selected: tabsSelectId,
+    })
 
     renderFilesUI({
       items: files,
@@ -191,16 +263,27 @@ module.exports = ({ requireModules, fileGlob }) => {
       width: listWidth,
     })
 
-    //
-    const { name, stdout } = byId(fileSelectId, {})
-
     renderResultUI({
+      left: listWidth,
       width: `100%-${listWidth}`,
-      label: name,
-      content: stdout,
+      content:
+        tabsSelectId === "results"
+          ? stdout
+          : JSON.stringify(
+              {
+                path: id,
+                shouldRunOnChange,
+                command: ["node", id, ...executorRunArgs],
+              },
+              null,
+              2
+            ),
     })
 
-    //
+    renderHelpUI({
+      isVisible: !isCLIVisible,
+    })
+
     renderCommandUI({
       value: cliQuery,
       isVisible: isCLIVisible,

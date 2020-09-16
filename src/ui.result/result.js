@@ -1,26 +1,6 @@
 const blessed = require("neo-blessed")
 
-const resultUI = ({ parent }) => {
-  const labelBox = blessed.box({
-    parent,
-    tags: true,
-    keys: false,
-    vi: false,
-    mouse: false,
-    top: 0,
-    right: 0,
-    height: 1,
-    align: "right",
-  })
-
-  const borderTopLine = blessed.line({
-    parent,
-    orientation: "horizontal",
-    top: 1,
-    right: 0,
-    height: 1,
-  })
-
+const resultUI = ({ parent, top }) => {
   const contentBox = blessed.log({
     parent,
     tags: true,
@@ -30,9 +10,8 @@ const resultUI = ({ parent }) => {
     scrollable: true,
     scrollOnInput: true,
 
-    top: 2,
-    right: 0,
-    height: "100%-3",
+    top,
+    height: "100%-4",
 
     scrollbar: {
       style: {
@@ -44,7 +23,6 @@ const resultUI = ({ parent }) => {
       border: {
         fg: "white",
       },
-
       focus: {
         border: {
           fg: "blue",
@@ -58,21 +36,17 @@ const resultUI = ({ parent }) => {
 
   return [
     contentBox,
-    ({ width, label, content }) => {
-      labelBox.setContent(label)
-      labelBox.position.width = width
-
-      borderTopLine.position.width = width
-
+    ({ left, width, content }) => {
       contentBox.setContent(content)
-      contentBox.position.width = width
+      contentBox.width = width
+      contentBox.position.left = left
 
       /**
        * Persist state data
        */
 
       contentBox._.width = width
-      contentBox._.label = label
+      contentBox._.left = left
       contentBox._.content = content
     },
   ]
