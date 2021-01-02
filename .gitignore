@@ -75,3 +75,5 @@ compile/
 
 # Flow type
 flow-typed/
+
+tags

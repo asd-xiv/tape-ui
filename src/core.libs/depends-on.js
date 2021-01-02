@@ -1,7 +1,7 @@
 const espree = require("espree")
 const fs = require("fs")
 const path = require("path")
-const { pipe, filterWith, startsWith, map, read } = require("m.xyz")
+const { pipe, filterWith, startsWith, map, read } = require("@asd14/m")
 
 const scanRequiredFiles = source => {
   const content = fs.readFileSync(source, "utf8")

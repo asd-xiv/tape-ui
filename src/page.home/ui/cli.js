@@ -43,7 +43,7 @@ const commandUI = ({
       if (value === "") {
         onCancel()
       } else {
-        onChange(value.substr(0, value.length - 1))
+        onChange(value.slice(0, Math.max(0, value.length - 1)))
       }
     }
 

@@ -1,5 +1,5 @@
 const blessed = require("neo-blessed")
-const { map, reduce } = require("m.xyz")
+const { map, reduce } = require("@asd14/m")
 
 const tabsUI = ({ parent, top, tabs }) => {
   const props = { tabs }

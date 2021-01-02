@@ -8,7 +8,7 @@ const {
   findIndexWith,
   contains,
   is,
-} = require("m.xyz")
+} = require("@asd14/m")
 
 const { loaderUI } = require("../../core.ui/loader")
 

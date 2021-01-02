@@ -3,7 +3,7 @@
  */
 
 const dependencyTree = require("dependency-tree")
-const { forEach } = require("m.xyz")
+const { forEach } = require("@asd14/m")
 
 process.on(
   "message",

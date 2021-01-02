@@ -1,5 +1,5 @@
 const blessed = require("neo-blessed")
-const { is } = require("m.xyz")
+const { is } = require("@asd14/m")
 
 const asciiFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 

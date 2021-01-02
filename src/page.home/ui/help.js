@@ -1,5 +1,5 @@
 const blessed = require("neo-blessed")
-const { map, pipe, join } = require("m.xyz")
+const { map, pipe, join } = require("@asd14/m")
 
 const helpUI = ({ parent, width, left, bottom }) => {
   const shortcutList = [

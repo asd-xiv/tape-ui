@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { isEmpty } = require("m.xyz")
+const { isEmpty } = require("@asd14/m")
 
 // First args will always be the node path followed by interpreted file
 const params = require("minimist")(process.argv.slice(2), {

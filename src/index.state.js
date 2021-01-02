@@ -3,7 +3,7 @@ const glob = require("glob")
 const { sep } = require("path")
 const { buildList } = require("just-a-list.redux")
 const { createStore, combineReducers } = require("redux")
-const { flatten, distinct, split, last, map, pipe } = require("m.xyz")
+const { flatten, distinct, split, last, map, pipe } = require("@asd14/m")
 
 /**
  *

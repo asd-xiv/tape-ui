@@ -1,5 +1,5 @@
 const blessed = require("neo-blessed")
-const { reduce, forEach } = require("m.xyz")
+const { reduce, forEach } = require("@asd14/m")
 
 const projectPkg = require(`${process.cwd()}/package.json`)
 
@@ -13,8 +13,8 @@ const { useRunner } = require("./core.hooks/use-runner/runner.hook")
 /**
  * Main app function, called from "bin/cli.js"
  *
- * @param {String[]} props.requireModules asd
- * @param {String[]} props.fileGlob       asd
+ * @param {string[]} props.requireModules asd
+ * @param {string[]} props.fileGlob       asd
  */
 module.exports = ({ requireModules, fileGlob }) => {
   const testRunArgs = reduce(

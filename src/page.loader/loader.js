@@ -11,7 +11,7 @@ const {
   all,
   hasKey,
   pipe,
-} = require("m.xyz")
+} = require("@asd14/m")
 
 const { FileList, store } = require("../index.state")
 

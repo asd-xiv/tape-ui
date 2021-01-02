@@ -9,7 +9,7 @@ const {
   push,
   contains,
   filterWith,
-} = require("m.xyz")
+} = require("@asd14/m")
 
 const { store, FileList } = require("../index.state")
 
