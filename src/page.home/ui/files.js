@@ -7,9 +7,10 @@ const {
   replace,
   findIndexWith,
   contains,
+  is,
 } = require("m.xyz")
 
-const { loaderUI } = require("../ui.loader/loader")
+const { loaderUI } = require("../../core.ui/loader")
 
 const filesUI = ({ parent, onRun, onChange }) => {
   const [, renderLoaderUI] = loaderUI({
@@ -90,26 +91,51 @@ const filesUI = ({ parent, onRun, onChange }) => {
     }
   }
 
+  list.selectNext = () => {
+    const selectedId = list._.selectedId
+    const items = list._.items
+    const index = findIndexWith({ id: contains(selectedId) }, items)
+
+    if (index < items.length) {
+      onChange(read([index + 1, "id"])(items))
+    }
+  }
+
+  list.selectPrev = () => {
+    const selectedId = list._.selectedId
+    const items = list._.items
+    const index = findIndexWith({ id: contains(selectedId) }, items)
+
+    if (index > 0) {
+      onChange(read([index - 1, "id"])(items))
+    }
+  }
+
   return [
     list,
 
-    ({ items, highlight, width }) => {
-      renderLoaderUI({
-        content: `${items.length} test files`,
-        width,
-        isLoading: hasWith({ isRunning: true }, items),
-      })
+    ({ selectedId, items, highlight, width }) => {
+      /*
+       * useEffect(() => {
+       * }, [selectedId])
+       */
 
-      borderTopLine.width = width
-      list.width = width
+      const prevSelectedId = list._.selectedId
+
+      if (selectedId !== prevSelectedId) {
+        if (is(prevSelectedId)) {
+        }
+      }
 
       /*
        * useEffect(() => {
-       *   ...
        * }, [items, highlight])
        */
 
-      if (!isDeepEqual(items, list._.items) || highlight !== list._.highlight) {
+      const prevHighlight = list._.highlight
+      const prevItems = list._.items
+
+      if (!isDeepEqual(items, prevItems) || highlight !== prevHighlight) {
         list.setItems(
           map(({ name, code, isRunning }) => {
             const color = isRunning
@@ -129,10 +155,20 @@ const filesUI = ({ parent, onRun, onChange }) => {
         )
       }
 
+      renderLoaderUI({
+        content: `${items.length} test files`,
+        width,
+        isLoading: hasWith({ isRunning: true }, items),
+      })
+
+      borderTopLine.width = width
+      list.width = width
+
       /*
        * Local props, acts like prevProps
        */
 
+      list._.selectedId = selectedId
       list._.items = items
       list._.highlight = highlight
       list._.width = width

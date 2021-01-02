@@ -2,16 +2,7 @@ const blessed = require("neo-blessed")
 const { map, reduce } = require("m.xyz")
 
 const tabsUI = ({ parent, top, tabs }) => {
-  const labelBox = blessed.box({
-    parent,
-    tags: true,
-    keys: false,
-    vi: false,
-    mouse: false,
-    top,
-    height: 1,
-    right: 0,
-  })
+  const props = { tabs }
 
   const tabBoxes = map(item => {
     const box = blessed.box({
@@ -37,9 +28,6 @@ const tabsUI = ({ parent, top, tabs }) => {
   return [
     "",
     ({ label = "", width, left, selected }) => {
-      labelBox.setContent(label)
-      labelBox.width = label.length
-
       borderTopLine.width = width
       borderTopLine.position.left = left
 
@@ -63,10 +51,10 @@ const tabsUI = ({ parent, top, tabs }) => {
        * Persist state data
        */
 
-      labelBox._.label = label
-      labelBox._.width = width
-      labelBox._.left = left
-      labelBox._.selected = selected
+      props.label = label
+      props.width = width
+      props.left = left
+      props.selected = selected
     },
   ]
 }

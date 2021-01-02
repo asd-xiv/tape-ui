@@ -8,7 +8,7 @@
  */
 
 const { spawn } = require("child_process")
-const { logger } = require("./logger")
+const { logger } = require("../../core.libs/logger")
 
 const runOne = ({ path, runArgs }) => {
   logger.info({

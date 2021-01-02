@@ -3,11 +3,11 @@ const { map, pipe, join } = require("m.xyz")
 
 const helpUI = ({ parent, width, left, bottom }) => {
   const shortcutList = [
-    { key: "1", label: "Results" },
-    { key: "2", label: "Details" },
-    { key: "/", label: "Filter" },
-    { key: "r", label: "Run" },
-    { key: "shift+r", label: "Run all" },
+    { key: "1", label: "results" },
+    { key: "2", label: "details" },
+    { key: "/", label: "filter" },
+    { key: "r", label: "run" },
+    { key: "shift+r", label: "run all" },
   ]
 
   const contentBox = blessed.box({

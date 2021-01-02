@@ -1,53 +1,42 @@
 const blessed = require("neo-blessed")
-const {
-  converge,
-  reduce,
-  read,
-  pipe,
-  map,
-  count,
-  max,
-  push,
-  contains,
-  filterWith,
-  forEach,
-} = require("m.xyz")
-const { fork } = require("child_process")
+const { reduce, forEach } = require("m.xyz")
 
 const projectPkg = require(`${process.cwd()}/package.json`)
-const { filesUI } = require("./ui.files/files")
-const { resultUI } = require("./ui.result/result")
-const { commandUI } = require("./ui.cli/cli")
-const { tabsUI } = require("./ui.tabs/tabs")
-const { helpUI } = require("./ui.help/help")
 
-const { FileList } = require("./ui.files/files.list")
-const { store } = require("./index.state")
+const { homePage } = require("./page.home/home")
+const { loaderPage } = require("./page.loader/loader")
 
-//
+const { FileList, store } = require("./index.state")
+const { useScanner } = require("./core.hooks/use-scanner/scanner.hook")
+const { useRunner } = require("./core.hooks/use-runner/runner.hook")
+
+/**
+ * Main app function, called from "bin/cli.js"
+ *
+ * @param {String[]} props.requireModules asd
+ * @param {String[]} props.fileGlob       asd
+ */
 module.exports = ({ requireModules, fileGlob }) => {
-  const executorRunArgs = reduce(
+  const testRunArgs = reduce(
     (acc, item) => [...acc, "-r", item],
     [],
     requireModules
   )
 
-  // Separate node process to offload test file execution
-  const executor = fork(`${__dirname}/lib/executor.js`, executorRunArgs)
-
-  executor.on("message", ({ path, stdout, stderr, code }) => {
-    FileList.update(path, {
-      isRunning: false,
-      stdout,
-      stderr,
-      code,
-    })
+  // Separate node process for offloading test execution
+  const runnerWorker = useRunner({
+    runArgs: testRunArgs,
+    onFinish: ({ path, stdout, stderr, code }) => {
+      FileList.update(path, {
+        isRunning: false,
+        stdout,
+        stderr,
+        code,
+      })
+    },
   })
 
-  /**
-   *
-   */
-
+  //
   const screen = blessed.screen({
     title: `${projectPkg.name} v${projectPkg.version}`,
 
@@ -74,109 +63,32 @@ module.exports = ({ requireModules, fileGlob }) => {
     debug: true,
   })
 
-  /**
-   * List with test file names
-   */
-
-  const [filesRef, renderFilesUI] = filesUI({
-    parent: screen,
-    onChange: path => {
-      store.dispatch({
-        type: "USE-STATE.SET",
-        payload: { id: "fileSelectId", value: path },
-      })
-    },
-    onRun: path => {
-      store.dispatch({
-        type: "USE-STATE.SET",
-        payload: { id: "fileSelectId", value: path },
-      })
-
-      executor.send({
-        path,
-        runArgs: executorRunArgs,
-      })
-
-      FileList.update(path, {
-        isRunning: true,
-      })
-    },
-  })
-
-  filesRef.focus()
-
-  /**
-   * Text box with test results
-   */
-
-  const [resultRef, renderResultUI] = resultUI({
-    parent: screen,
-    top: 2,
-  })
-
-  const [, renderTabsUI] = tabsUI({
-    parent: screen,
-    tabs: ["results", "details"],
-    top: 0,
-  })
-
-  const [, renderHelpUI] = helpUI({
-    parent: screen,
-    width: "100%",
-    left: 0,
-    bottom: 0,
-  })
-
-  /**
-   * Command Line Interface input for searching & highlighting through files
-   */
-
-  const handleCLIHide = () => {
-    store.dispatch({
-      type: "USE-STATE.SET",
-      payload: { id: "isCLIVisible", value: false },
-    })
-  }
-
-  const [, renderCommandUI] = commandUI({
-    parent: screen,
-    width: "100%",
-    height: "1px",
-    top: "100%-1",
-    left: "0",
-    onChange: source => {
-      store.dispatch({
-        type: "USE-STATE.SET",
-        payload: { id: "cliQuery", value: source },
-      })
-    },
-    onSubmit: source => {
-      filesRef.selectFirstWith(source)
-
-      handleCLIHide()
-    },
-    onCancel: handleCLIHide,
-    onBlur: handleCLIHide,
-  })
-
+  // Left/Right arrow switch focus between file list and results
   screen.on("keypress", (code, key) => {
     if (key.full === "right") {
-      resultRef.focus()
+      store.dispatch({
+        type: "USE-STATE.SET",
+        payload: { id: "focusId", value: "result" },
+      })
     }
 
     if (key.full === "left") {
-      filesRef.focus()
+      store.dispatch({
+        type: "USE-STATE.SET",
+        payload: { id: "focusId", value: "files" },
+      })
     }
   })
 
+  // Cycle through focusable elements
   screen.key("S-tab", () => {
     screen.focusPrevious()
   })
-
   screen.key("tab", () => {
     screen.focusNext()
   })
 
+  // Switch to file result tab
   screen.key("1", () => {
     store.dispatch({
       type: "USE-STATE.SET",
@@ -184,6 +96,7 @@ module.exports = ({ requireModules, fileGlob }) => {
     })
   })
 
+  // Switch to file details tab
   screen.key("2", () => {
     store.dispatch({
       type: "USE-STATE.SET",
@@ -191,22 +104,22 @@ module.exports = ({ requireModules, fileGlob }) => {
     })
   })
 
-  screen.key("/", () => {
+  // Open filter/cli input
+  screen.key(["/", ":"], () => {
     store.dispatch({
       type: "USE-STATE.SET",
       payload: { id: "isCLIVisible", value: true },
     })
   })
 
+  // Run all test files at once
   screen.key("S-r", () => {
     const { items } = FileList.selector(store.getState())
 
-    // console.log({ items: items() })
-
     forEach(({ id }) => {
-      executor.send({
+      runnerWorker.send({
         path: id,
-        runArgs: executorRunArgs,
+        runArgs: testRunArgs,
       })
 
       FileList.update(id, {
@@ -215,80 +128,71 @@ module.exports = ({ requireModules, fileGlob }) => {
     })(items())
   })
 
+  /**
+   * High level UI components
+   */
+
+  const [homePageRef, renderHomePage] = homePage({
+    parent: screen,
+    onFileRun: path => {
+      runnerWorker.send({ path, runArgs: testRunArgs })
+    },
+  })
+
+  // Offload test file dependency scanning to separate node process
+  const scannerWorker = useScanner({
+    onFinish: ({ path, dependsOnFiles }) => {
+      FileList.update(path, {
+        dependsOnFiles,
+      })
+    },
+  })
+
+  const [loaderPageRef, renderLoaderPage] = loaderPage({
+    parent: screen,
+    glob: fileGlob,
+    onFilesLoaded: fileArray => {
+      scannerWorker.send(fileArray)
+    },
+  })
+
   /* eslint-disable unicorn/no-process-exit */
   screen.key(["C-c"], () => {
-    return process.exit(0)
+    scannerWorker.kill()
+    runnerWorker.kill()
   })
 
-  /*
-   * Find all files matching glob
-   */
+  scannerWorker.on("close", () => (runnerWorker.killed ? process.exit() : null))
+  runnerWorker.on("close", () => (scannerWorker.killed ? process.exit() : null))
 
-  FileList.read(fileGlob)
-
-  /*
-   * When any part of state changes, re-render all UI wigets
-   */
-  store.subscribe(() => {
+  const renderApp = () => {
     const currentState = store.getState()
-    const [fileSelectId, tabsSelectId, cliQuery, isCLIVisible] = converge(
-      (...params) => params,
-      [
-        read(["USE-STATE", "fileSelectId"], null),
-        read(["USE-STATE", "tabsSelectId"], "results"),
-        read(["USE-STATE", "cliQuery"], ""),
-        read(["USE-STATE", "isCLIVisible"], false),
-      ]
-    )(currentState)
-    const { items, byId } = FileList.selector(currentState)
-    const { id, name, shouldRunOnChange, stdout } = byId(fileSelectId, {})
-    const files = filterWith({ name: contains(cliQuery) })(items())
-    const listWidth = pipe(
-      map([read("name"), count]),
-      push(20),
-      max,
-      source => source + 5
-    )(files)
+    const { items, isLoaded, error } = FileList.selector(currentState)
 
-    renderTabsUI({
-      label: name,
-      left: listWidth,
-      width: `100%-${listWidth}`,
-      selected: tabsSelectId,
-    })
+    const isBootstraped = false
+    // all(hasKey("dependsOnFiles"), items())
 
-    renderFilesUI({
-      items: files,
-      highlight: cliQuery,
-      width: listWidth,
-    })
+    // console.log({ isBootstraped })
 
-    renderResultUI({
-      left: listWidth,
-      width: `100%-${listWidth}`,
-      content:
-        tabsSelectId === "results"
-          ? stdout
-          : JSON.stringify(
-              {
-                path: id,
-                shouldRunOnChange,
-                command: ["node", id, ...executorRunArgs],
-              },
-              null,
-              2
-            ),
-    })
+    if (isBootstraped) {
+      renderHomePage()
 
-    renderHelpUI({
-      isVisible: !isCLIVisible,
-    })
+      loaderPageRef.hide()
+      homePageRef.show()
+    } else {
+      renderLoaderPage()
 
-    renderCommandUI({
-      value: cliQuery,
-      isVisible: isCLIVisible,
-    })
+      loaderPageRef.show()
+      homePageRef.hide()
+    }
 
+    // only call to screen.render in the app
     screen.render()
+  }
+
+  store.subscribe(() => {
+    renderApp()
   })
+
+  renderApp()
 }

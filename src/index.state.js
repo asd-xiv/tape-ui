@@ -1,8 +1,40 @@
+const glob = require("glob")
+// const dependencyTree = require("dependency-tree")
+const { sep } = require("path")
+const { buildList } = require("just-a-list.redux")
 const { createStore, combineReducers } = require("redux")
+const { flatten, distinct, split, last, map, pipe } = require("m.xyz")
 
-const { FileList } = require("./ui.files/files.list")
+/**
+ *
+ */
+const FileList = buildList({
+  name: "FILES",
 
-// Global state store
+  // @signature (fileGlob: String[]): Object[]
+  read: pipe(
+    map(item => glob.sync(item, { absolute: true })),
+    flatten,
+    distinct,
+    map(item => {
+      return {
+        id: item,
+        name: pipe(split(sep), last)(item),
+        code: null,
+        isRunning: false,
+      }
+    })
+  ),
+
+  update: (id, data) => ({
+    id,
+    ...data,
+  }),
+})
+
+/**
+ *
+ */
 const store = createStore(
   combineReducers({
     "USE-STATE": (state = {}, { type, payload: { id, value } = {} }) => {
@@ -20,7 +52,6 @@ const store = createStore(
   })
 )
 
-// Link list to app store
 FileList.set({ dispatch: store.dispatch })
 
-module.exports = { store }
+module.exports = { FileList, store }
