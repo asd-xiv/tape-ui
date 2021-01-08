@@ -5,7 +5,9 @@
 
 # WIP: Tape UI
 
-![Tape UI](screenshot.png)
+![Tape UI](screenshot-intro.png)
+
+![Tape UI](screenshot-main.png)
 
 ---
 
