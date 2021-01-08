@@ -1,3 +1,5 @@
+/* eslint-disable no-sync */
+
 const espree = require("espree")
 const fs = require("fs")
 const path = require("path")

@@ -7,12 +7,11 @@ const {
   replace,
   findIndexWith,
   contains,
-  is,
 } = require("@asd14/m")
 
 const { loaderUI } = require("../../core.ui/loader")
 
-const filesUI = ({ parent, onRun, onChange }) => {
+const filesUI = ({ parent, onRun, onSelect }) => {
   const [, renderLoaderUI] = loaderUI({
     parent,
     top: 0,
@@ -72,7 +71,7 @@ const filesUI = ({ parent, onRun, onChange }) => {
   })
 
   list.key(["down", "up"], () => {
-    onChange(read([list.selected, "id"], null)(list._.items), list.selected)
+    onSelect(read([list.selected, "id"], null)(list._.items), list.selected)
   })
 
   list.key("r", () => {
@@ -80,7 +79,7 @@ const filesUI = ({ parent, onRun, onChange }) => {
   })
 
   list.on("element click", () => {
-    onChange(read([list.selected, "id"], null)(list._.items), list.selected)
+    onSelect(read([list.selected, "id"], null)(list._.items), list.selected)
   })
 
   list.selectFirstWith = source => {
@@ -97,7 +96,7 @@ const filesUI = ({ parent, onRun, onChange }) => {
     const index = findIndexWith({ id: contains(selectedId) }, items)
 
     if (index < items.length) {
-      onChange(read([index + 1, "id"])(items))
+      onSelect(read([index + 1, "id"])(items))
     }
   }
 
@@ -107,7 +106,7 @@ const filesUI = ({ parent, onRun, onChange }) => {
     const index = findIndexWith({ id: contains(selectedId) }, items)
 
     if (index > 0) {
-      onChange(read([index - 1, "id"])(items))
+      onSelect(read([index - 1, "id"])(items))
     }
   }
 
@@ -120,12 +119,12 @@ const filesUI = ({ parent, onRun, onChange }) => {
        * }, [selectedId])
        */
 
-      const prevSelectedId = list._.selectedId
+      // const prevSelectedId = list._.selectedId
 
-      if (selectedId !== prevSelectedId) {
-        if (is(prevSelectedId)) {
-        }
-      }
+      // if (selectedId !== prevSelectedId) {
+      //   if (is(prevSelectedId)) {
+      //   }
+      // }
 
       /*
        * useEffect(() => {

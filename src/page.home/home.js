@@ -1,6 +1,5 @@
 const blessed = require("neo-blessed")
 const {
-  converge,
   read,
   pipe,
   map,
@@ -11,7 +10,7 @@ const {
   filterWith,
 } = require("@asd14/m")
 
-const { store, FileList } = require("../index.state")
+const { store } = require("../index.state")
 
 const { filesUI } = require("./ui/files")
 const { resultUI } = require("./ui/result")
@@ -19,7 +18,7 @@ const { commandUI } = require("./ui/cli")
 const { tabsUI } = require("./ui/tabs")
 const { helpUI } = require("./ui/help")
 
-const homePage = ({ parent, testRunnerWorker, testRunArgs }) => {
+const homePage = ({ parent, onFileSelect, onFileRun }) => {
   // Parent of all component's UI elements
   const baseRef = blessed.box({
     parent,
@@ -27,29 +26,8 @@ const homePage = ({ parent, testRunnerWorker, testRunArgs }) => {
 
   const [filesRef, renderFilesUI] = filesUI({
     parent: baseRef,
-
-    onChange: path => {
-      store.dispatch({
-        type: "USE-STATE.SET",
-        payload: { id: "fileSelectId", value: path },
-      })
-    },
-
-    onRun: path => {
-      store.dispatch({
-        type: "USE-STATE.SET",
-        payload: { id: "fileSelectId", value: path },
-      })
-
-      testRunnerWorker.send({
-        path,
-        runArgs: testRunArgs,
-      })
-
-      FileList.update(path, {
-        isRunning: true,
-      })
-    },
+    onSelect: path => onFileSelect(path),
+    onRun: path => onFileRun(path),
   })
 
   filesRef.focus()
@@ -120,36 +98,25 @@ const homePage = ({ parent, testRunnerWorker, testRunArgs }) => {
 
   return [
     baseRef,
-    () => {
-      const currentState = store.getState()
-      const [fileSelectId, tabsSelectId, cliQuery, isCLIVisible] = converge(
-        (...params) => params,
-        [
-          read(["USE-STATE", "fileSelectId"], null),
-          read(["USE-STATE", "tabsSelectId"], "results"),
-          read(["USE-STATE", "cliQuery"], ""),
-          read(["USE-STATE", "isCLIVisible"], false),
-        ]
-      )(currentState)
-      const { items, byId } = FileList.selector(currentState)
-      const { id, name, shouldRunOnChange, stdout } = byId(fileSelectId, {})
-      const files = filterWith({ name: contains(cliQuery) })(items())
+    ({ files, fileSelected = {}, tab, cliQuery, isCLIVisible }) => {
+      const { id, name, dependsOnFiles, stdout } = fileSelected
+      const filesFiltered = filterWith({ name: contains(cliQuery) }, files)
       const listWidth = pipe(
         map([read("name"), count]),
         push(20),
         max,
         source => source + 5
-      )(files)
+      )(filesFiltered)
 
       renderTabsUI({
         label: name,
         left: listWidth,
         width: `100%-${listWidth}`,
-        selected: tabsSelectId,
+        selected: tab,
       })
 
       renderFilesUI({
-        items: files,
+        items: filesFiltered,
         highlight: cliQuery,
         width: listWidth,
       })
@@ -158,13 +125,12 @@ const homePage = ({ parent, testRunnerWorker, testRunArgs }) => {
         left: listWidth,
         width: `100%-${listWidth}`,
         content:
-          tabsSelectId === "results"
+          tab === "results"
             ? stdout
             : JSON.stringify(
                 {
                   path: id,
-                  shouldRunOnChange,
-                  command: ["node", id, ...testRunArgs],
+                  watch: dependsOnFiles,
                 },
                 null,
                 2

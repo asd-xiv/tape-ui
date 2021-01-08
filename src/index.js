@@ -1,5 +1,13 @@
 const blessed = require("neo-blessed")
-const { reduce, forEach } = require("@asd14/m")
+const {
+  all,
+  hasKey,
+  pipe,
+  reduce,
+  forEach,
+  read,
+  readMany,
+} = require("@asd14/m")
 
 const projectPkg = require(`${process.cwd()}/package.json`)
 
@@ -84,6 +92,7 @@ module.exports = ({ requireModules, fileGlob }) => {
   screen.key("S-tab", () => {
     screen.focusPrevious()
   })
+
   screen.key("tab", () => {
     screen.focusNext()
   })
@@ -134,65 +143,95 @@ module.exports = ({ requireModules, fileGlob }) => {
 
   const [homePageRef, renderHomePage] = homePage({
     parent: screen,
-    onFileRun: path => {
-      runnerWorker.send({ path, runArgs: testRunArgs })
-    },
-  })
 
-  // Offload test file dependency scanning to separate node process
-  const scannerWorker = useScanner({
-    onFinish: ({ path, dependsOnFiles }) => {
-      FileList.update(path, {
-        dependsOnFiles,
+    onFileSelect: id => {
+      store.dispatch({
+        type: "USE-STATE.SET",
+        payload: { id: "fileSelectId", value: id },
+      })
+    },
+
+    onFileRun: id => {
+      runnerWorker.send({ path: id, runArgs: testRunArgs })
+
+      store.dispatch({
+        type: "USE-STATE.SET",
+        payload: { id: "fileSelectId", value: id },
+      })
+
+      FileList.update(id, {
+        isRunning: true,
       })
     },
   })
 
-  const [loaderPageRef, renderLoaderPage] = loaderPage({
-    parent: screen,
-    glob: fileGlob,
-    onFilesLoaded: fileArray => {
-      scannerWorker.send(fileArray)
+  // Offload test file dependency scanning to separate node process
+  const dependencyScannerWorker = useScanner({
+    onFinish: ({ path, dependsOnFiles }) => {
+      FileList.update(path, { dependsOnFiles })
     },
   })
 
+  const [loaderPageRef, renderLoaderPage] = loaderPage({ parent: screen })
+
   /* eslint-disable unicorn/no-process-exit */
   screen.key(["C-c"], () => {
-    scannerWorker.kill()
+    dependencyScannerWorker.kill()
     runnerWorker.kill()
   })
 
-  scannerWorker.on("close", () => (runnerWorker.killed ? process.exit() : null))
-  runnerWorker.on("close", () => (scannerWorker.killed ? process.exit() : null))
+  dependencyScannerWorker.on("close", () =>
+    runnerWorker.killed ? process.exit() : null
+  )
+  runnerWorker.on("close", () =>
+    dependencyScannerWorker.killed ? process.exit() : null
+  )
 
   const renderApp = () => {
     const currentState = store.getState()
-    const { items, isLoaded, error } = FileList.selector(currentState)
+    const { items, byId, isLoaded, isLoading } = FileList.selector(currentState)
+    const isFileDependencyScanFinished = all(hasKey("dependsOnFiles"), items())
 
-    const isBootstraped = false
-    // all(hasKey("dependsOnFiles"), items())
+    // Find all test files and scan for each file's dependencies
+    if (!isLoading() && !isLoaded()) {
+      FileList.read(fileGlob).then(({ result }) => {
+        dependencyScannerWorker.send(readMany("id", null, result))
+      })
+    }
 
-    // console.log({ isBootstraped })
-
-    if (isBootstraped) {
-      renderHomePage()
+    if (isFileDependencyScanFinished) {
+      renderHomePage({
+        files: items(),
+        fileSelected: pipe(
+          read(["USE-STATE", "fileSelectId"]),
+          byId
+        )(currentState),
+        tab: read(["USE-STATE", "tabsSelectId"], "results", currentState),
+        cliQuery: read(["USE-STATE", "cliQuery"], "", currentState),
+        isCLIVisible: read(["USE-STATE", "isCLIVisible"], false, currentState),
+      })
 
       loaderPageRef.hide()
       homePageRef.show()
     } else {
-      renderLoaderPage()
+      renderLoaderPage({
+        fileGlob,
+        files: items(),
+        isLoaded: isLoaded(),
+        isFileDependencyScanFinished,
+      })
 
       loaderPageRef.show()
       homePageRef.hide()
     }
 
-    // only call to screen.render in the app
+    // Only call to screen.render in the app
     screen.render()
   }
 
-  store.subscribe(() => {
-    renderApp()
-  })
+  // When any change occures in the Redux store, render the app
+  store.subscribe(() => renderApp())
 
+  // Kickstart the app
   renderApp()
 }

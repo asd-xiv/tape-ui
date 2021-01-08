@@ -5,20 +5,15 @@ const {
   count,
   map,
   read,
+  prepend,
   countWith,
   is,
   join,
-  all,
-  hasKey,
+  push,
   pipe,
 } = require("@asd14/m")
 
-const { FileList, store } = require("../index.state")
-
-const loaderPage = ({ parent, glob, onFilesLoaded }) => {
-  //
-  const state = { isLoaded: null, isLoading: null }
-
+const loaderPage = ({ parent }) => {
   // Parent of all component's UI elements
   const ref = blessed.element({
     parent,
@@ -30,8 +25,9 @@ const loaderPage = ({ parent, glob, onFilesLoaded }) => {
     top: "10%",
     left: "center",
     width: 49,
-    height: 9,
-    content: `████████╗ █████╗ ██████╗ ███████╗    ██╗   ██╗██╗
+    height: 10,
+    content: `
+████████╗ █████╗ ██████╗ ███████╗    ██╗   ██╗██╗
 ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝    ██║   ██║██║
    ██║   ███████║██████╔╝█████╗      ██║   ██║██║
    ██║   ██╔══██║██╔═══╝ ██╔══╝      ██║   ██║██║
@@ -41,55 +37,18 @@ const loaderPage = ({ parent, glob, onFilesLoaded }) => {
        --- Reactive test runner for Tape ---`,
   })
 
-  const table = blessed.table({
+  const progress = blessed.box({
     parent: ref,
     top: "10%+11",
     align: "left",
     left: "center",
     width: 60,
     tags: true,
-    style: {
-      cell: { padding: 0 },
-    },
   })
 
   return [
     ref,
-    () => {
-      const fileListSelect = FileList.selector(store.getState())
-      const files = fileListSelect.items()
-      const isLoading = fileListSelect.isLoading()
-      const isLoaded = fileListSelect.isLoaded()
-
-      /*
-       * useEffect(() => {
-       *   ...
-       * }, [isLoading, isLoaded])
-       */
-
-      if (state.isLoading !== isLoading || state.isLoaded !== isLoaded) {
-        if (!isLoading && !isLoaded) {
-          // logger.log("{bold}Scanning files")
-          // logger.log("==={/}")
-          // logger.log("")
-
-          // forEach(item => logger.log(`- ${item}`))(glob)
-          // logger.log("")
-
-          FileList.read(glob)
-        }
-
-        if (isLoaded) {
-          // logger.log(`> Found ${files.length} test files`)
-
-          onFilesLoaded(map(read("id"), files))
-        }
-      }
-
-      const testFilesTraversed = countWith({
-        dependsOnFiles: is,
-      })(files)
-
+    ({ fileGlob, files, isLoaded, isFileDependencyScanFinished }) => {
       const sourceFileCount = pipe(
         map(read("dependsOnFiles", [])),
         flatten,
@@ -97,28 +56,39 @@ const loaderPage = ({ parent, glob, onFilesLoaded }) => {
         count
       )(files)
 
-      const isScanFinished = all(hasKey("dependsOnFiles"), files)
+      const testFilesTraversed = countWith({ dependsOnFiles: is }, files)
 
-      table.setData([
-        [
-          isLoaded ? "{green-fg}{bold}✓{/}" : "",
-          `{bold}Scanning{/} ... [${files.length} files found]`,
-        ],
-        ["", `  {#909090-fg}// Matching globs: ${join(", ")(glob)}{/}`],
+      progress.setContent(
+        pipe(
+          push(
+            `${isLoaded ? "{bold}{green-fg}✓{/green-fg}" : " "} Scanning ... ${
+              files.length
+            } test files found{/}`
+          ),
+          push("{007-fg}"),
+          push(""),
+          push("  // Files matching:"),
+          push(map(prepend("  //   - "), fileGlob)),
+          push("{/}"),
 
-        [
-          isScanFinished ? "{green-fg}{bold}✓{/}" : "",
-          `{bold}Building dependency tree{/} ... [${testFilesTraversed}/${files.length} files traversed]`,
-        ],
-        [
-          "",
-          `  {#909090-fg}// Will watch and react to changes of ${sourceFileCount} source files{/}`,
-        ],
-      ])
+          push(""),
 
-      //
-      state.isLoaded = isLoaded
-      state.isLoading = isLoading
+          push(
+            `{bold}${
+              isFileDependencyScanFinished ? "{green-fg}✓{/green-fg}" : " "
+            } Building dependency tree ... ${testFilesTraversed}/${
+              files.length
+            } files{/}`
+          ),
+          push(""),
+          push(
+            `{007-fg}  // Will watch for changes of ${sourceFileCount} source files{/}`
+          ),
+
+          flatten,
+          join("\n")
+        )([])
+      )
     },
   ]
 }
